@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Head from "next/head";
 import NextLink from "next/link";
+import * as Yup from 'yup';
 import dayjs, { Dayjs } from "dayjs";
 import {
   Button,
@@ -22,12 +23,32 @@ import {
   MuiTelInputCountry,
   MuiTelInputInfo,
 } from "mui-tel-input";
+import { useFormik } from "formik";
 
 const Register = () => {
-  const [value, setValue] = React.useState<Dayjs | null>(dayjs("2022-04-07"));
+  const [birth, setBirth] = React.useState<Dayjs | null>(dayjs("2022-04-07"));
+  const [authEmailInputView, setEmailInputView] =
+    React.useState<boolean>(false);
   // const [gender, setGender] = React.useState("Male");
   const [phone, setPhone] = React.useState<string>("");
+  
+  const RegisterSchema = Yup.object().shape({
+    nickName: Yup.string().min(2, 'Too Short!').max(50, 'Too Long!').required('Nickname required'),
+    email: Yup.string().email('Email must be a valid email address').required('Email is required'),
+    password: Yup.string().required('Password is required'),
+  });
 
+  const formik = useFormik({
+    initialValues: {
+      nickName: '',
+      email: '',
+      password: '',
+    },
+    validationSchema: RegisterSchema,
+    onSubmit: values => {
+      alert(JSON.stringify(values, null, 2));
+    },
+  });
   const handlePhoneNumberChange = (newPhone: string, info: MuiTelInputInfo) => {
     setPhone(newPhone);
   };
@@ -63,6 +84,7 @@ const Register = () => {
             id="outlined-basic"
             label="아이디(이메일)"
             variant="outlined"
+            value={formik.values.email}
             fullWidth
           />
         </Grid>
@@ -70,17 +92,40 @@ const Register = () => {
           <Button
             color="primary"
             fullWidth
-            size="large"
             type="submit"
             variant="contained"
-            sx={{ height: "100%", fontSize: "11px"}}
+            // onClick={set}
+            sx={{ height: "100%", fontSize: "11px" }}
           >
-            인증번호<br/>발송
+            인증번호
+            <br />
+            발송
+          </Button>
+        </Grid>
+        <Grid item xs={9} display={{ xs: "none", lg: "none" }}>
+          <TextField
+            id="outlined-basic"
+            label="인증번호 입력"
+            variant="outlined"
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={3} display={{ xs: "none", lg: "none" }}>
+          <Button
+            color="primary"
+            fullWidth
+            type="submit"
+            variant="contained"
+            // onClick={set}
+            sx={{ height: "100%"}}
+          >
+            확인
           </Button>
         </Grid>
         <Grid item xs={12}>
           <TextField
             id="outlined-basic"
+            type="password"
             label="비밀번호"
             variant="outlined"
             fullWidth
@@ -89,6 +134,7 @@ const Register = () => {
         <Grid item xs={12}>
           <TextField
             id="outlined-basic"
+            type="password"
             label="비밀번호 확인"
             variant="outlined"
             fullWidth
@@ -101,9 +147,9 @@ const Register = () => {
               label="생년월일"
               openTo="year"
               views={["year", "month", "day"]}
-              value={value}
+              value={birth}
               onChange={(newValue) => {
-                setValue(newValue);
+                setBirth(newValue);
               }}
               renderInput={(params) => <TextField {...params} />}
             />
