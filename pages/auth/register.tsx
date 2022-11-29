@@ -17,12 +17,6 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import TextField from "@mui/material/TextField";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import {
-  MuiTelInput,
-  MuiTelInputContinent,
-  MuiTelInputCountry,
-  MuiTelInputInfo,
-} from "mui-tel-input";
 import { useFormik } from "formik";
 
 const Register = () => {
@@ -49,11 +43,7 @@ const Register = () => {
       alert(JSON.stringify(values, null, 2));
     },
   });
-  const handlePhoneNumberChange = (newPhone: string, info: MuiTelInputInfo) => {
-    setPhone(newPhone);
-  };
-  // const continents: MuiTelInputContinent[] = ["AS"];
-  const excludedCountries: MuiTelInputCountry[] = [];
+
 
   return (
     <Container maxWidth="sm">
@@ -167,16 +157,7 @@ const Register = () => {
             <FormControlLabel value="Female" control={<Radio />} label="여자" />
           </RadioGroup>
         </Grid>
-        <Grid item xs={12}>
-          <MuiTelInput
-            fullWidth
-            defaultCountry="KR"
-            value={phone}
-            onChange={handlePhoneNumberChange}
-            // continents={continents}
-            excludedCountries={excludedCountries}
-          />
-        </Grid>
+     
         <Grid item xs={12}>
           <Button
             color="primary"

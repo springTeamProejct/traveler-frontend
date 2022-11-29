@@ -4,7 +4,7 @@ import { CertificaationPhone } from './certification-phone'
 
 export const RegisterPageController = () => {
   return (
-    <Container maxWidth="sm">
+    <Container maxWidth="xs">
         <CertificaationPhone/>
     </Container>
   )
