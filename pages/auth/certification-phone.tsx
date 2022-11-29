@@ -13,7 +13,15 @@ import {
   MuiTelInputInfo,
 } from "mui-tel-input";
 import React, { useEffect, useState } from "react";
-
+interface InitBtnProps {
+  setViewAuthSection: React.Dispatch<React.SetStateAction<boolean>>;
+}
+interface AuthSectionsProps {
+  isView: boolean;
+}
+interface CountDownProps {
+  secTime: number;
+}
 export const CertificaationPhone = () => {
   const [phoneNumber, setPhoneNumber] = React.useState<string>("");
   const [viewAuthSection, setViewAuthSection] = React.useState<boolean>(false);
@@ -33,39 +41,45 @@ export const CertificaationPhone = () => {
         // continents={continents}
         excludedCountries={excludedCountries}
       />
-      {viewAuthSection && (
-        <FormControl variant="standard">
-          <Input id="auth-input" />
-          <FormHelperText id="auth-count-down">3:00</FormHelperText>
-        </FormControl>
-      )}
-
-      <InitButton />
+      <AuthSection isView={viewAuthSection} />
+      <InitButton setViewAuthSection={setViewAuthSection} />
     </Stack>
   );
 };
 
-const AuthSection = () => {
-  return <></>;
+const AuthSection = (props: AuthSectionsProps) => {
+  return (
+    <>
+      {props.isView && (
+        <FormControl variant="standard">
+          <Input id="auth-input" />
+          <a href="#" id="auth-count-down">
+            재발급
+            <CountDown secTime={30} />
+          </a>
+        </FormControl>
+      )}
+    </>
+  );
 };
 
-const InitButton = () => {
+const InitButton = (prop: InitBtnProps) => {
   return (
     <Button
       color="primary"
       fullWidth
       type="submit"
       variant="contained"
-      onClick={() => setViewAuthSection(true)}
+      onClick={() => prop.setViewAuthSection(true)}
     >
       인증하기
     </Button>
   );
 };
 
-const CountDownButton = () => {
-  const [time, setTime] = useState<number>(-1);
-  var secTime = 180;
+const CountDown = (props: CountDownProps) => {
+  const [time, setTime] = useState<number>(props.secTime);
+  var secTime = props.secTime;
   useEffect(() => {
     const countDown = setInterval(() => {
       setTime(secTime);
@@ -76,13 +90,9 @@ const CountDownButton = () => {
       --secTime;
     }, 1000);
     return () => clearInterval(countDown);
-  }, time);
+  }, []);
 
-  return (
-    <Button fullWidth type="submit" variant="contained" color="success">
-      {time}
-    </Button>
-  );
+  return <>{time}</>;
 };
 
 const NumberInputCompleteButton = () => {
