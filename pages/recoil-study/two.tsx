@@ -1,5 +1,6 @@
 import React from 'react'
 import { useRecoilState } from 'recoil';
+import { textState } from './recoil-store';
 
 export const Two = () => {
     const [text, setText] = useRecoilState(textState);

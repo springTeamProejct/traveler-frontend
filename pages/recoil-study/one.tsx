@@ -5,16 +5,12 @@ import {
     selector,
     useRecoilState,
     useRecoilValue,
-  } from 'recoil';
-  
-  const textState = atom({
-    key: 'textState', // unique ID (with respect to other atoms/selectors)
-    default: '', // default value (aka initial value)
-  });
+} from 'recoil';
+import { textState } from './recoil-store';
 
 export const One = () => {
-   
-  return (
-    <div>One</div>
-  )
+    const [text, setText] = useRecoilState(textState);
+    return (
+        <div>One Page {text}</div>
+    )
 }

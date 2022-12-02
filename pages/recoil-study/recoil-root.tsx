@@ -2,7 +2,7 @@ import React from 'react'
 import { One } from './one';
 import { Two } from './two';
 
-export const RecoilStudyRoot = () => {
+const RecoilStudyRoot = () => {
     return (
         <>
             <One />
@@ -10,3 +10,5 @@ export const RecoilStudyRoot = () => {
         </>
     );
 }
+
+export default RecoilStudyRoot;
