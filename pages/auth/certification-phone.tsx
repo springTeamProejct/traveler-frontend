@@ -13,6 +13,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { MuiOtpInput } from 'mui-one-time-password-input';
 import { useCountdownTimer } from "../../hooks/useCountdownTimer"
+import { useAuthStatus } from "../../apis/auth/signup";
 interface AuthButtonProps {
   viewAuthInput: boolean;
   setViewAuthInput: React.Dispatch<React.SetStateAction<boolean>>;
@@ -61,13 +62,13 @@ export const CertificaationPhone = ({ setIsUser }: CertificaationPhoneProps) => 
 const AuthInput = ({ sendAuthBtn, setIsUser }: AuthInputProps) => {
   const [value, setValue] = useState<string>('');
   const { timeLeft, formattedTimeLeft, setTimeLeft } = useCountdownTimer(0);
-  const handleChange = (newValue: string) => {
-    setValue(newValue);
-  }
   useEffect(() => {
     setTimeLeft(180);
   }, [sendAuthBtn]);
 
+  const handleChange = (newValue: string) => {
+    setValue(newValue);
+  }
   const handleComplete = (finalValue: string) => {
     if (finalValue === '222222') {
       console.log('hello')
@@ -105,12 +106,14 @@ const AuthInput = ({ sendAuthBtn, setIsUser }: AuthInputProps) => {
 
 const AuthButton = ({ viewAuthInput, setBtnClicked, setViewAuthInput }: AuthButtonProps) => {
   const { timeLeft, formattedTimeLeft, setTimeLeft } = useCountdownTimer(0);
+  const test = useAuthStatus("phone", "01098598222");
 
   const handleAuthButtonClick = () => {
     if (timeLeft === 0) {
       setBtnClicked((value) => !value);
       setViewAuthInput(true);
       setTimeLeft(30);
+      console.log(test.data);
     }
   }
 
