@@ -28,9 +28,13 @@
     "next": "13.0.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-kakao-maps-sdk": "^1.1.5",
     "recoil": "^0.7.6",
     "styled-components": "^5.3.6",
     "typescript": "4.8.4",
     "yup": "^0.32.11"
+  },
+  "devDependencies": {
+    "kakao.maps.d.ts": "^0.1.33"
   }
 }
