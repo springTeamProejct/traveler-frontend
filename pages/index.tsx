@@ -1,8 +1,40 @@
 import Head from 'next/head'
 import Image from 'next/image'
+import { useEffect } from 'react';
 import styles from '../styles/Home.module.css'
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 export default function Home() {
+
+  const { mutate, isLoading, isError, error, isSuccess } = useMutation(async ()=> {
+
+  });
+  
+  const getKakaoTocken = useMutation({
+    mutationFn: code => {
+      const headers = new Headers();
+      let parameter;
+      headers.append('Content-Type', 'application/x-www-form-urlencoded;charset=utf-8');
+
+      parameter
+
+      return fetch(
+        `kauth.kakao.com`,
+        {
+          method: 'POST',
+          headers,
+          body,
+        }
+      ).then(res => res.json())
+    }
+  })
+
+  useEffect(() => {
+    let code = new URL(window.location.href);
+    console.log(code.searchParams.get('code'));
+    
+  }, [])
+
   return (
     <div className={styles.container}>
       <Head>
