@@ -6,33 +6,37 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 
 export default function Home() {
 
-  const { mutate, isLoading, isError, error, isSuccess } = useMutation(async ()=> {
+  // const { mutate, isLoading, isError, error, isSuccess } = useMutation(async ()=> {
 
-  });
+  // });
   
   const getKakaoTocken = useMutation({
-    mutationFn: code => {
-      const headers = new Headers();
-      let parameter;
-      headers.append('Content-Type', 'application/x-www-form-urlencoded;charset=utf-8');
-
-      parameter
-
+    mutationFn: (code : string) => {
+      const json_parameters = {
+        "grant_type" : "authorization_code",
+        "client_id" : "02ddaa97e21deb004a41e0f09dc46db1",
+        "redirect_uri" : "http://localhost",
+        "code" : code
+      }
       return fetch(
         `kauth.kakao.com`,
         {
           method: 'POST',
-          headers,
-          body,
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
+          },
+          body: new URLSearchParams(json_parameters),
         }
       ).then(res => res.json())
     }
   })
 
   useEffect(() => {
-    let code = new URL(window.location.href);
-    console.log(code.searchParams.get('code'));
-    
+    const queryString = new URL(window.location.href);
+    const code: any = queryString.searchParams.get('code');
+    // console.log(typeof(code));
+    console.log(code);
+    console.log(getKakaoTocken.mutate(code));
   }, [])
 
   return (
