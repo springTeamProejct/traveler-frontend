@@ -15,11 +15,11 @@ export default function Home() {
       const json_parameters = {
         "grant_type" : "authorization_code",
         "client_id" : "02ddaa97e21deb004a41e0f09dc46db1",
-        "redirect_uri" : "http://localhost",
+        "redirect_uri" : "http://localhost:3000/",
         "code" : code
       }
       return fetch(
-        `kauth.kakao.com`,
+        `https://kauth.kakao.com/oauth/token`,
         {
           method: 'POST',
           headers: {
@@ -36,8 +36,18 @@ export default function Home() {
     const code: any = queryString.searchParams.get('code');
     // console.log(typeof(code));
     console.log(code);
-    console.log(getKakaoTocken.mutate(code));
+   getKakaoTocken.mutate(code);
   }, [])
+  
+  if (getKakaoTocken.isLoading) return <p>Loading...</p>
+  
+  if (getKakaoTocken.error) return <p>An error has occurred</p>
+
+  if (getKakaoTocken.isSuccess){
+    console.log(getKakaoTocken.data)
+
+    return  <p> Success </p>
+  } 
 
   return (
     <div className={styles.container}>
