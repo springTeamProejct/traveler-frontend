@@ -1,3 +1,3 @@
-import {Test} from "../view_model/vm-oauth-kakao";
+import { VMOauthKakao } from "../view_model/vm-oauth-kakao";
 
-export {Text}
+export { VMOauthKakao }
