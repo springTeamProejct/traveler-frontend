@@ -1,16 +1,16 @@
 import { Button } from '@mui/material';
 import React from 'react'
 import Image from 'next/image';
-import naver_login_medium_wide from "../../public/naver_login_medium_wide.png";
+import { NaverOAuthDatas } from '../../utils';
 
 const OAuthNaverButton = () => {
 
     return (
-        <Button href="https://nid.naver.com/oauth2.0/authorize">
+        <Button href={NaverOAuthDatas().NAVER_AUTH_URL}>
             <Image
                 width={300}
                 height={45}
-                src={naver_login_medium_wide}
+                src="https://static.nid.naver.com/oauth/big_g.PNG?version=js-2.0.1"
                 alt="kakao login"
             />
         </Button >

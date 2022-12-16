@@ -1,3 +1,3 @@
-import { KakaoOAuthDatas } from "./oauth";
+import { KakaoOAuthDatas, NaverOAuthDatas } from "./oauth";
 
-export { KakaoOAuthDatas }
+export { KakaoOAuthDatas, NaverOAuthDatas }
