@@ -6,6 +6,7 @@ import {
   InputAdornment,
 } from "@mui/material";
 import { Stack } from "@mui/system";
+import { useFormik } from "formik";
 import {
   MuiTelInput,
   MuiTelInputContinent,
@@ -13,6 +14,8 @@ import {
   MuiTelInputInfo,
 } from "mui-tel-input";
 import React, { useEffect, useState } from "react";
+import { MuiOtpInput } from 'mui-one-time-password-input'
+
 interface InitBtnProps {
   setViewAuthSection: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -22,11 +25,13 @@ interface AuthSectionsProps {
 interface CountDownProps {
   secTime: number;
 }
-
 interface CertificaationPhoneProps {
   setIsUser: React.Dispatch<React.SetStateAction<boolean>>;
 }
 export const CertificaationPhone = ({ setIsUser }: CertificaationPhoneProps) => {
+  // const formik = useFormik({
+
+  // );
   const [phoneNumber, setPhoneNumber] = React.useState<string>("");
   const [viewAuthSection, setViewAuthSection] = React.useState<boolean>(false);
   const handlePhoneNumberChange = (newPhone: string, info: MuiTelInputInfo) => {
@@ -45,21 +50,39 @@ export const CertificaationPhone = ({ setIsUser }: CertificaationPhoneProps) => 
         // continents={continents}
         excludedCountries={excludedCountries}
       />
-      <AuthSection isView={viewAuthSection} />
       <InitButton setViewAuthSection={setViewAuthSection} />
+      <AuthSection isView={viewAuthSection} />
     </Stack>
   );
 };
 
 const AuthSection = (props: AuthSectionsProps) => {
+  const [value, setValue] = React.useState<string>('')
+
+  const handleChange = (newValue: string) => {
+    setValue(newValue)
+  }
+
+  const handleComplete = (finalValue: string) => {
+    console.log("🚀 ~ file: certification-phone.tsx:67 ~ handleComplete ~ finalValue", finalValue)
+  }
   return (
     <>
       {props.isView && (
         <FormControl variant="standard">
-          <Input id="auth-input" />
+          <MuiOtpInput
+            TextFieldsProps={{
+              error: true,
+            }}
+            id="auth-input"
+            value={value}
+            onChange={handleChange}
+            onComplete={handleComplete}
+            length={6}
+            validateChar={(character: string, index: number) => true}
+          />
           <a href="#" id="auth-count-down">
-            재발급
-            <CountDown secTime={29} />
+
           </a>
         </FormControl>
       )}
@@ -68,37 +91,62 @@ const AuthSection = (props: AuthSectionsProps) => {
 };
 
 const InitButton = (prop: InitBtnProps) => {
+  const [buttonStatus, setButtonStatus] = useState<string>("인증하기");
+
   return (
     <Button
       color="primary"
       fullWidth
       type="submit"
       variant="contained"
-      onClick={() => prop.setViewAuthSection(true)}
+      onClick={() => {
+        prop.setViewAuthSection(true);
+        setButtonStatus("재전송");
+      }}
     >
-      인증하기
+      {buttonStatus} {" "}
+      {
+        buttonStatus === "재전송" &&
+        <CountDown secTime={29} />
+      }
     </Button>
   );
 };
 
+
 const CountDown = (props: CountDownProps) => {
-  const [time, setTime] = useState<number>(props.secTime);
+  const [time, setTime] = useState<number>();
   var secTime = props.secTime;
+
   useEffect(() => {
     const countDown = setInterval(() => {
       setTime(secTime);
-      console.log(secTime);
       if (secTime < 0) {
         clearInterval(countDown);
       }
       --secTime;
     }, 1000);
+
     return () => clearInterval(countDown);
   }, []);
 
   return <>{time}</>;
 };
 
-const NumberInputCompleteButton = () => {
-  return <></>;
-};
+// const CountDown = (props: CountDownProps) => {
+//   const [time, setTime] = useState<number>(props.secTime);
+//   var secTime = props.secTime;
+//   useEffect(() => {
+//     const countDown = setInterval(() => {
+//       setTime(secTime);
+//       if (secTime < 0) {
+//         clearInterval(countDown);
+//       }
+//       --secTime;
+//     }, 1000);
+
+//     return () => clearInterval(countDown);
+//   }, []);
+
+//   return <>{time}</>;
+// };
