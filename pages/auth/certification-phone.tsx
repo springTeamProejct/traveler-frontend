@@ -22,7 +22,11 @@ interface AuthSectionsProps {
 interface CountDownProps {
   secTime: number;
 }
-export const CertificaationPhone = () => {
+
+interface CertificaationPhoneProps {
+  setIsUser: React.Dispatch<React.SetStateAction<boolean>>;
+}
+export const CertificaationPhone = ({ setIsUser }: CertificaationPhoneProps) => {
   const [phoneNumber, setPhoneNumber] = React.useState<string>("");
   const [viewAuthSection, setViewAuthSection] = React.useState<boolean>(false);
   const handlePhoneNumberChange = (newPhone: string, info: MuiTelInputInfo) => {
@@ -55,7 +59,7 @@ const AuthSection = (props: AuthSectionsProps) => {
           <Input id="auth-input" />
           <a href="#" id="auth-count-down">
             재발급
-            <CountDown secTime={30} />
+            <CountDown secTime={29} />
           </a>
         </FormControl>
       )}

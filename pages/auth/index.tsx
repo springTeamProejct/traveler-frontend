@@ -1,11 +1,18 @@
 import { Container } from '@mui/system'
-import React from 'react'
-import { CertificaationPhone } from './certification-phone'
+import React, { useState } from 'react'
+import { CertificaationPhone } from './certification-phone';
 
 export const RegisterPageController = () => {
+  const [isUser, setIsUser] = useState<boolean>(true);
+
   return (
     <Container maxWidth="xs">
-        <CertificaationPhone/>
+      {
+        isUser
+          ? <CertificaationPhone setIsUser={setIsUser} />
+          : <p> Login Page </p>
+      }
+
     </Container>
   )
 }
