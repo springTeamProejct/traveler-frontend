@@ -6,16 +6,15 @@ import {
   InputAdornment,
 } from "@mui/material";
 import { Stack } from "@mui/system";
-import { useFormik } from "formik";
 import {
   MuiTelInput,
   MuiTelInputContinent,
   MuiTelInputCountry,
   MuiTelInputInfo,
 } from "mui-tel-input";
-import React, { useEffect, useState } from "react";
-import { MuiOtpInput } from 'mui-one-time-password-input'
-
+import React, { useEffect, useRef, useState } from "react";
+import { MuiOtpInput } from 'mui-one-time-password-input';
+import { useCountdownTimer } from "../../hooks/useCountdownTimer"
 interface InitBtnProps {
   setViewAuthSection: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -23,15 +22,13 @@ interface AuthSectionsProps {
   isView: boolean;
 }
 interface CountDownProps {
-  secTime: number;
+  setTimer: React.Dispatch<React.SetStateAction<number>>;
+  start: boolean;
 }
 interface CertificaationPhoneProps {
   setIsUser: React.Dispatch<React.SetStateAction<boolean>>;
 }
 export const CertificaationPhone = ({ setIsUser }: CertificaationPhoneProps) => {
-  // const formik = useFormik({
-
-  // );
   const [phoneNumber, setPhoneNumber] = React.useState<string>("");
   const [viewAuthSection, setViewAuthSection] = React.useState<boolean>(false);
   const handlePhoneNumberChange = (newPhone: string, info: MuiTelInputInfo) => {
@@ -58,14 +55,13 @@ export const CertificaationPhone = ({ setIsUser }: CertificaationPhoneProps) => 
 
 const AuthSection = (props: AuthSectionsProps) => {
   const [value, setValue] = React.useState<string>('')
-
   const handleChange = (newValue: string) => {
     setValue(newValue)
   }
-
   const handleComplete = (finalValue: string) => {
     console.log("🚀 ~ file: certification-phone.tsx:67 ~ handleComplete ~ finalValue", finalValue)
   }
+
   return (
     <>
       {props.isView && (
@@ -82,7 +78,6 @@ const AuthSection = (props: AuthSectionsProps) => {
             validateChar={(character: string, index: number) => true}
           />
           <a href="#" id="auth-count-down">
-
           </a>
         </FormControl>
       )}
@@ -90,8 +85,10 @@ const AuthSection = (props: AuthSectionsProps) => {
   );
 };
 
-const InitButton = (prop: InitBtnProps) => {
-  const [buttonStatus, setButtonStatus] = useState<string>("인증하기");
+const InitButton = ({ setViewAuthSection }: InitBtnProps) => {
+  const [buttonStatus, setButtonStatus] = useState<boolean>(false);
+  const [seconds, setSeconds] = useState(60);
+  const { timeLeft, formattedTimeLeft } = useCountdownTimer(seconds);
 
   return (
     <Button
@@ -99,54 +96,19 @@ const InitButton = (prop: InitBtnProps) => {
       fullWidth
       type="submit"
       variant="contained"
+      disabled={seconds < 0 ? true : false}
       onClick={() => {
-        prop.setViewAuthSection(true);
-        setButtonStatus("재전송");
+        console.log("🚀 ~ file: certification-phone.tsx:115 ~ InitButton ~ onClick");
+        setViewAuthSection(true);
+        setButtonStatus(true);
+        setSeconds(60);
       }}
     >
-      {buttonStatus} {" "}
       {
-        buttonStatus === "재전송" &&
-        <CountDown secTime={29} />
+        buttonStatus
+          ? <>재전송 {formattedTimeLeft} {" | "}  </>
+          : <>인증번호전송 {timeLeft} </>
       }
     </Button>
   );
 };
-
-
-const CountDown = (props: CountDownProps) => {
-  const [time, setTime] = useState<number>();
-  var secTime = props.secTime;
-
-  useEffect(() => {
-    const countDown = setInterval(() => {
-      setTime(secTime);
-      if (secTime < 0) {
-        clearInterval(countDown);
-      }
-      --secTime;
-    }, 1000);
-
-    return () => clearInterval(countDown);
-  }, []);
-
-  return <>{time}</>;
-};
-
-// const CountDown = (props: CountDownProps) => {
-//   const [time, setTime] = useState<number>(props.secTime);
-//   var secTime = props.secTime;
-//   useEffect(() => {
-//     const countDown = setInterval(() => {
-//       setTime(secTime);
-//       if (secTime < 0) {
-//         clearInterval(countDown);
-//       }
-//       --secTime;
-//     }, 1000);
-
-//     return () => clearInterval(countDown);
-//   }, []);
-
-//   return <>{time}</>;
-// };
