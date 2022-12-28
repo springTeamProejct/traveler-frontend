@@ -15,28 +15,26 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import { MuiOtpInput } from 'mui-one-time-password-input';
 import { useCountdownTimer } from "../../hooks/useCountdownTimer"
+import { DefaultValue } from "recoil";
 interface InitBtnProps {
-  setViewAuthSection: React.Dispatch<React.SetStateAction<boolean>>;
+  setViewAuthInput: React.Dispatch<React.SetStateAction<boolean>>;
 }
-interface AuthSectionsProps {
+interface AuthInputProps {
   isView: boolean;
-}
-interface CountDownProps {
-  setTimer: React.Dispatch<React.SetStateAction<number>>;
-  start: boolean;
+  setIsUser: React.Dispatch<React.SetStateAction<string>>;
 }
 interface CertificaationPhoneProps {
-  setIsUser: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsUser: React.Dispatch<React.SetStateAction<string>>;
 }
+
 export const CertificaationPhone = ({ setIsUser }: CertificaationPhoneProps) => {
   const [phoneNumber, setPhoneNumber] = React.useState<string>("");
-  const [viewAuthSection, setViewAuthSection] = React.useState<boolean>(false);
+  const [viewAuthInput, setViewAuthInput] = React.useState<boolean>(false);
   const handlePhoneNumberChange = (newPhone: string, info: MuiTelInputInfo) => {
     setPhoneNumber(newPhone);
   };
   // const continents: MuiTelInputContinent[] = ["AS"];
   const excludedCountries: MuiTelInputCountry[] = [];
-
   return (
     <Stack spacing={2}>
       <MuiTelInput
@@ -47,28 +45,39 @@ export const CertificaationPhone = ({ setIsUser }: CertificaationPhoneProps) => 
         // continents={continents}
         excludedCountries={excludedCountries}
       />
-      <AuthButton setViewAuthSection={setViewAuthSection} />
-      <AuthSection isView={viewAuthSection} />
+      <AuthButton setViewAuthInput={setViewAuthInput} />
+      <AuthInput isView={viewAuthInput} setIsUser={setIsUser} />
     </Stack>
   );
 };
 
-const AuthSection = (props: AuthSectionsProps) => {
-  const [value, setValue] = React.useState<string>('')
+const AuthInput = ({ isView, setIsUser }: AuthInputProps) => {
+  const [value, setValue] = useState<string>('');
   const handleChange = (newValue: string) => {
-    setValue(newValue)
+    setValue(newValue);
   }
   const handleComplete = (finalValue: string) => {
-    console.log("🚀 ~ file: certification-phone.tsx:67 ~ handleComplete ~ finalValue", finalValue)
+    console.log("🚀 ~ file: certification-phone.tsx:67 ~ handleComplete ~ finalValue", finalValue);
+    if (finalValue === '222222') {
+      console.log('hello')
+
+      // 회원인지 아닌지 확인
+      if (false) {
+        setIsUser('isUser');
+      }
+      else {
+        setIsUser('notUser')
+      }
+    }
   }
 
   return (
     <>
-      {props.isView && (
+      {isView && (
         <FormControl variant="standard">
           <MuiOtpInput
             TextFieldsProps={{
-              error: true,
+              // color: 'success'
             }}
             id="auth-input"
             value={value}
@@ -77,7 +86,7 @@ const AuthSection = (props: AuthSectionsProps) => {
             length={6}
             validateChar={(character: string, index: number) => true}
           />
-          <a href="#" id="auth-count-down">
+          <a href="#" id="auth-count-down">fe
           </a>
         </FormControl>
       )}
@@ -85,21 +94,18 @@ const AuthSection = (props: AuthSectionsProps) => {
   );
 };
 
-const AuthButton = ({ setViewAuthSection }: InitBtnProps) => {
+const AuthButton = ({ setViewAuthInput }: InitBtnProps) => {
   const [buttonState, setButtonState] = useState(0);
   const { timeLeft, formattedTimeLeft, setTimeLeft } = useCountdownTimer(0);
 
-  // 0: 처음만 가능한
-  // 1: 재전송으로 변경
   const handleAuthButtonClick = () => {
-
     if (buttonState === 0) {
       setButtonState(1);
-      setViewAuthSection(true);
-      setTimeLeft(10);
+      setViewAuthInput(true);
+      setTimeLeft(30);
     }
     else if (buttonState === 1) {
-      setTimeLeft(10);
+      setTimeLeft(30);
     }
   }
 

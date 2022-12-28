@@ -1,21 +1,33 @@
 import { Container } from '@mui/system'
 import React, { useState } from 'react'
 import { CertificaationPhone } from './certification-phone';
-import { CountdownTimer } from './temp';
+import SignUp from './signup';
 
 export const RegisterPageController = () => {
-  const [isUser, setIsUser] = useState<boolean>(true);
+  const [authPage, setAuthPage] = useState('firstPage');
 
-  return (
-    <Container maxWidth="xs">
-      {
-        isUser
-          ? <CertificaationPhone setIsUser={setIsUser} />
-          : <p> Login Page </p>
-      }
+  if (authPage === 'firstPage') {
+    return (
+      <Container maxWidth="xs">
+        <CertificaationPhone setIsUser={setAuthPage} />
+      </Container>
+    );
+  }
+  else if (authPage === 'notUser') {
+    return (
+      <Container maxWidth="sm">
+        <SignUp />
+      </Container>
+    );
+  }
+  else if (authPage === 'isUser') {
+    return (
+      <Container maxWidth="xs" >
+        <CertificaationPhone setIsUser={setAuthPage} />
+      </Container >
+    );
+  }
 
-    </Container>
-  )
 }
 
 export default RegisterPageController;

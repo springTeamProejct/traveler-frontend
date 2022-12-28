@@ -44,7 +44,7 @@ const SignUp = () => {
 
 
   return (
-    <Container maxWidth="sm">
+    <>
       <Head>
         <title>회원가입 | Traveler</title>
       </Head>
@@ -187,7 +187,7 @@ const SignUp = () => {
           </Grid>
         </Grid>
       </form>
-    </Container >
+    </>
   );
 };
 
