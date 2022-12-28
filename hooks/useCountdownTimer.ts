@@ -13,7 +13,8 @@ export function useCountdownTimer(seconds: number) {
     return () => clearInterval(intervalId);
   }, [timeLeft]);
 
-  const formattedTimeLeft = new Date(timeLeft * 1000).toISOString().substr(11, 8);
+  // const formattedTimeLeft = new Date(timeLeft * 1000).toISOString().substr(11, 8);
+  const formattedTimeLeft = new Date(timeLeft * 1000).toISOString().substr(14, 5);
 
-  return { timeLeft, formattedTimeLeft };
+  return { timeLeft, formattedTimeLeft, setTimeLeft };
 }

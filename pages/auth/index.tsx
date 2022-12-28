@@ -10,10 +10,10 @@ export const RegisterPageController = () => {
     <Container maxWidth="xs">
       {
         isUser
-          ? <CountdownTimer seconds={60} /> //<CertificaationPhone setIsUser={setIsUser} />
+          ? <CertificaationPhone setIsUser={setIsUser} />
           : <p> Login Page </p>
       }
-      <CertificaationPhone setIsUser={setIsUser} />
+
     </Container>
   )
 }

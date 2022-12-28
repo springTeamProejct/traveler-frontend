@@ -47,7 +47,7 @@ export const CertificaationPhone = ({ setIsUser }: CertificaationPhoneProps) => 
         // continents={continents}
         excludedCountries={excludedCountries}
       />
-      <InitButton setViewAuthSection={setViewAuthSection} />
+      <AuthButton setViewAuthSection={setViewAuthSection} />
       <AuthSection isView={viewAuthSection} />
     </Stack>
   );
@@ -85,10 +85,23 @@ const AuthSection = (props: AuthSectionsProps) => {
   );
 };
 
-const InitButton = ({ setViewAuthSection }: InitBtnProps) => {
-  const [buttonStatus, setButtonStatus] = useState<boolean>(false);
-  const [seconds, setSeconds] = useState(60);
-  const { timeLeft, formattedTimeLeft } = useCountdownTimer(seconds);
+const AuthButton = ({ setViewAuthSection }: InitBtnProps) => {
+  const [buttonState, setButtonState] = useState(0);
+  const { timeLeft, formattedTimeLeft, setTimeLeft } = useCountdownTimer(0);
+
+  // 0: 처음만 가능한
+  // 1: 재전송으로 변경
+  const handleAuthButtonClick = () => {
+
+    if (buttonState === 0) {
+      setButtonState(1);
+      setViewAuthSection(true);
+      setTimeLeft(10);
+    }
+    else if (buttonState === 1) {
+      setTimeLeft(10);
+    }
+  }
 
   return (
     <Button
@@ -96,19 +109,14 @@ const InitButton = ({ setViewAuthSection }: InitBtnProps) => {
       fullWidth
       type="submit"
       variant="contained"
-      disabled={seconds < 0 ? true : false}
-      onClick={() => {
-        console.log("🚀 ~ file: certification-phone.tsx:115 ~ InitButton ~ onClick");
-        setViewAuthSection(true);
-        setButtonStatus(true);
-        setSeconds(60);
-      }}
+      disabled={timeLeft > 0 ? true : false}
+      onClick={handleAuthButtonClick}
     >
       {
-        buttonStatus
-          ? <>재전송 {formattedTimeLeft} {" | "}  </>
-          : <>인증번호전송 {timeLeft} </>
+        buttonState > 0 // 0: 인증번호전송 >1: 재전송
+          ? <>재전송 {formattedTimeLeft} </>
+          : <>인증번호전송</>
       }
-    </Button>
+    </Button >
   );
 };
