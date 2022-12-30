@@ -1,9 +1,7 @@
 import {
   Button,
+  Container,
   FormControl,
-  FormHelperText,
-  Input,
-  InputAdornment,
 } from "@mui/material";
 import { Stack } from "@mui/system";
 import {
@@ -12,10 +10,9 @@ import {
   MuiTelInputCountry,
   MuiTelInputInfo,
 } from "mui-tel-input";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { MuiOtpInput } from 'mui-one-time-password-input';
 import { useCountdownTimer } from "../../hooks/useCountdownTimer"
-import { DefaultValue } from "recoil";
 interface InitBtnProps {
   setViewAuthInput: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -33,21 +30,24 @@ export const CertificaationPhone = ({ setIsUser }: CertificaationPhoneProps) => 
   const handlePhoneNumberChange = (newPhone: string, info: MuiTelInputInfo) => {
     setPhoneNumber(newPhone);
   };
-  // const continents: MuiTelInputContinent[] = ["AS"];
+  const continents: MuiTelInputContinent[] = ["AS"];
   const excludedCountries: MuiTelInputCountry[] = [];
+
   return (
-    <Stack spacing={2}>
-      <MuiTelInput
-        fullWidth
-        defaultCountry="KR"
-        value={phoneNumber}
-        onChange={handlePhoneNumberChange}
-        // continents={continents}
-        excludedCountries={excludedCountries}
-      />
-      <AuthButton setViewAuthInput={setViewAuthInput} />
-      <AuthInput isView={viewAuthInput} setIsUser={setIsUser} />
-    </Stack>
+    <Container maxWidth="xs">
+      <Stack spacing={2}>
+        <MuiTelInput
+          fullWidth
+          defaultCountry="KR"
+          value={phoneNumber}
+          onChange={handlePhoneNumberChange}
+          continents={continents}
+          excludedCountries={excludedCountries}
+        />
+        <AuthButton setViewAuthInput={setViewAuthInput} />
+        <AuthInput isView={viewAuthInput} setIsUser={setIsUser} />
+      </Stack>
+    </Container>
   );
 };
 
@@ -57,7 +57,6 @@ const AuthInput = ({ isView, setIsUser }: AuthInputProps) => {
     setValue(newValue);
   }
   const handleComplete = (finalValue: string) => {
-    console.log("🚀 ~ file: certification-phone.tsx:67 ~ handleComplete ~ finalValue", finalValue);
     if (finalValue === '222222') {
       console.log('hello')
 

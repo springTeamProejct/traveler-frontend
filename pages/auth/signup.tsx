@@ -19,14 +19,13 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useFormik } from "formik";
 
-const SignUp = () => {
-  const [birth, setBirth] = React.useState<Dayjs | null>(dayjs("2022-04-07"));
-  const [authEmailInputView, setEmailInputView] = React.useState<boolean>(false);
+export const Signup = () => {
+  const [birth, setBirth] = useState<Dayjs | null>(dayjs("2022-04-07"));
 
   const RegisterSchema = Yup.object().shape({
-    nickName: Yup.string().min(2, '너무 짧아요.').max(50, '너무 길어요.').required('필수항목 입니다.'),
-    email: Yup.string().email('이메일 형식으로 입력해주세요.').required('필수항목 입니다.'),
-    password: Yup.string().required('필수항목 입니다.'),
+    nickName: Yup.string().min(2, '너무 짧아요.').max(50, '너무 길어요.').required('필수항목 이예요.'),
+    email: Yup.string().email('이메일 형식으로 입력해주세요.').required('필수항목 이예요.'),
+    password: Yup.string().required('필수항목 이예요.'),
   });
 
   const formik = useFormik({
@@ -34,6 +33,7 @@ const SignUp = () => {
       nickName: '',
       email: '',
       password: '',
+      birth: dayjs("2022-04-07"),
     },
     validationSchema: RegisterSchema,
     onSubmit: values => {
@@ -42,9 +42,8 @@ const SignUp = () => {
     },
   });
 
-
   return (
-    <>
+    <Container maxWidth="sm">
       <Head>
         <title>회원가입 | Traveler</title>
       </Head>
@@ -152,11 +151,12 @@ const SignUp = () => {
                 disableFuture
                 label="생년월일"
                 openTo="year"
+
                 views={["year", "month", "day"]}
-                value={birth}
-                onChange={(newValue) => {
-                  setBirth(newValue);
+                onChange={(value) => {
+                  value !== null ? formik.setFieldValue('birth', Date.parse(value)) : console.log('null');
                 }}
+                value={formik.values.birth}
                 renderInput={(params) => <TextField {...params} />}
               />
             </LocalizationProvider>
@@ -172,7 +172,6 @@ const SignUp = () => {
               <FormControlLabel value="Female" control={<Radio />} label="여자" />
             </RadioGroup>
           </Grid>
-
           <Grid item xs={12}>
             <Button
               color="primary"
@@ -187,8 +186,6 @@ const SignUp = () => {
           </Grid>
         </Grid>
       </form>
-    </>
+    </Container>
   );
 };
-
-export default SignUp;
