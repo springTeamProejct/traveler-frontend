@@ -10,23 +10,27 @@ import {
   MuiTelInputCountry,
   MuiTelInputInfo,
 } from "mui-tel-input";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MuiOtpInput } from 'mui-one-time-password-input';
 import { useCountdownTimer } from "../../hooks/useCountdownTimer"
-interface InitBtnProps {
+interface AuthButtonProps {
+  viewAuthInput: boolean;
   setViewAuthInput: React.Dispatch<React.SetStateAction<boolean>>;
+  setBtnClicked: React.Dispatch<React.SetStateAction<boolean>>;
 }
 interface AuthInputProps {
-  isView: boolean;
   setIsUser: React.Dispatch<React.SetStateAction<string>>;
+  sendAuthBtn: boolean;
 }
 interface CertificaationPhoneProps {
   setIsUser: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const CertificaationPhone = ({ setIsUser }: CertificaationPhoneProps) => {
-  const [phoneNumber, setPhoneNumber] = React.useState<string>("");
-  const [viewAuthInput, setViewAuthInput] = React.useState<boolean>(false);
+  const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const [viewAuthInput, setViewAuthInput] = useState<boolean>(false);
+  const [btnClicked, setBtnClicked] = useState<boolean>(false);
+
   const handlePhoneNumberChange = (newPhone: string, info: MuiTelInputInfo) => {
     setPhoneNumber(newPhone);
   };
@@ -44,18 +48,26 @@ export const CertificaationPhone = ({ setIsUser }: CertificaationPhoneProps) => 
           continents={continents}
           excludedCountries={excludedCountries}
         />
-        <AuthButton setViewAuthInput={setViewAuthInput} />
-        <AuthInput isView={viewAuthInput} setIsUser={setIsUser} />
+        <AuthButton viewAuthInput={viewAuthInput} setBtnClicked={setBtnClicked} setViewAuthInput={setViewAuthInput} />
+        {
+          viewAuthInput &&
+          <AuthInput sendAuthBtn={btnClicked} setIsUser={setIsUser} />
+        }
       </Stack>
     </Container>
   );
 };
 
-const AuthInput = ({ isView, setIsUser }: AuthInputProps) => {
+const AuthInput = ({ sendAuthBtn, setIsUser }: AuthInputProps) => {
   const [value, setValue] = useState<string>('');
+  const { timeLeft, formattedTimeLeft, setTimeLeft } = useCountdownTimer(0);
   const handleChange = (newValue: string) => {
     setValue(newValue);
   }
+  useEffect(() => {
+    setTimeLeft(180);
+  }, [sendAuthBtn]);
+
   const handleComplete = (finalValue: string) => {
     if (finalValue === '222222') {
       console.log('hello')
@@ -72,38 +84,32 @@ const AuthInput = ({ isView, setIsUser }: AuthInputProps) => {
 
   return (
     <>
-      {isView && (
-        <FormControl variant="standard">
-          <MuiOtpInput
-            TextFieldsProps={{
-              // color: 'success'
-            }}
-            id="auth-input"
-            value={value}
-            onChange={handleChange}
-            onComplete={handleComplete}
-            length={6}
-            validateChar={(character: string, index: number) => true}
-          />
-          <a href="#" id="auth-count-down">fe
-          </a>
-        </FormControl>
-      )}
+      <FormControl variant="standard">
+        <MuiOtpInput
+          TextFieldsProps={{
+            // color: 'success'
+          }}
+          id="auth-input"
+          value={value}
+          onChange={handleChange}
+          onComplete={handleComplete}
+          length={6}
+          validateChar={(character: string, index: number) => true}
+        />
+        <a href="#" id="auth-count-down"> {formattedTimeLeft}
+        </a>
+      </FormControl>
     </>
   );
 };
 
-const AuthButton = ({ setViewAuthInput }: InitBtnProps) => {
-  const [buttonState, setButtonState] = useState(0);
+const AuthButton = ({ viewAuthInput, setBtnClicked, setViewAuthInput }: AuthButtonProps) => {
   const { timeLeft, formattedTimeLeft, setTimeLeft } = useCountdownTimer(0);
 
   const handleAuthButtonClick = () => {
-    if (buttonState === 0) {
-      setButtonState(1);
+    if (timeLeft === 0) {
+      setBtnClicked((value) => !value);
       setViewAuthInput(true);
-      setTimeLeft(30);
-    }
-    else if (buttonState === 1) {
       setTimeLeft(30);
     }
   }
@@ -118,7 +124,7 @@ const AuthButton = ({ setViewAuthInput }: InitBtnProps) => {
       onClick={handleAuthButtonClick}
     >
       {
-        buttonState > 0 // 0: 인증번호전송 >1: 재전송
+        viewAuthInput // 0: 인증번호전송 >1: 재전송
           ? <>재전송 {formattedTimeLeft} </>
           : <>인증번호전송</>
       }
