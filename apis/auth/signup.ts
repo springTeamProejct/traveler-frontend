@@ -7,9 +7,8 @@ import {
 } from "@tanstack/react-query";
 
 type AuthResultResponse = {
-  type: string;
-  phoneNum: string;
-  email: string;
+  status: string;
+  data: JSON;
 };
 
 export const MutationSendAuthCode = (body: Object) =>
