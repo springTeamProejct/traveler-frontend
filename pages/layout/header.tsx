@@ -5,9 +5,16 @@ import {
     Badge,
     AppBar,
     Popover,
+    Menu,
+    MenuItem,
+    Typography,
+    Button,
+    Avatar,
+    Tooltip,
 } from "@mui/material";
 import Toolbar from "@mui/material/Toolbar";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import MenuIcon from '@mui/icons-material/Menu';
 
 const NotificationsButton = () => {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -17,10 +24,10 @@ const NotificationsButton = () => {
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
     };
-
     const handleClose = () => {
         setAnchorEl(null);
     };
+
     return (
         <>
             <IconButton size="large" color="primary" onClick={handleClick}>
@@ -50,6 +57,82 @@ const NotificationsButton = () => {
     );
 };
 
+const LeftItems = () => {
+    //     const pages = [
+    //         { '게시판': '/board' },
+    //     ]
+    const pages = [
+        { name: '게시판', path: '/board' },
+        { name: '여행동행': '/' },
+        { name: '채팅': '/' }
+    ]
+
+    const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
+
+    const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorElNav(event.currentTarget);
+    };
+    const handleCloseNavMenu = () => {
+        setAnchorElNav(null);
+    };
+
+    return (
+        <>
+            <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+                <IconButton
+                    size="large"
+                    aria-label="account of current user"
+                    aria-controls="menu-appbar"
+                    aria-haspopup="true"
+                    onClick={handleOpenNavMenu}
+                    color="inherit"
+                >
+                    <MenuIcon />
+                </IconButton>
+                <Menu
+                    id="menu-appbar"
+                    anchorEl={anchorElNav}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                    }}
+                    keepMounted
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'left',
+                    }}
+                    open={Boolean(anchorElNav)}
+                    onClose={handleCloseNavMenu}
+                    sx={{
+                        display: { xs: 'block', md: 'none' },
+                    }}
+                >
+                    {pages.map((page) => (
+                        <MenuItem key={page} onClick={handleCloseNavMenu}>
+                            <Typography textAlign="center">{page}</Typography>
+                        </MenuItem>
+                    ))}
+                </Menu>
+            </Box>
+            <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+                {pages.map((page) => (
+                    <Button
+                        key={page.게시판}
+                        onClick={handleCloseNavMenu}
+                        sx={{ my: 2, color: 'white', display: 'block' }}
+                    >
+                        {page.게시판}
+                    </Button>
+                ))}
+            </Box>
+
+            <Box sx={{ flexGrow: 0 }}>
+
+
+            </Box>
+        </>
+    );
+}
 export default function Header() {
     return (
         <AppBar color="default">
@@ -61,8 +144,14 @@ export default function Header() {
                     px: 2,
                 }}
             >
+                <LeftItems />
                 <Box sx={{ flexGrow: 1 }} />
                 <NotificationsButton />
+                <Tooltip title="Open settings">
+                    <IconButton onClick={() => ''} sx={{ p: 0 }}>
+                        <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                    </IconButton>
+                </Tooltip>
             </Toolbar>
         </AppBar>
     );
