@@ -20,10 +20,7 @@ export const MutationSendAuthCode = (body: Object) =>
       if (value === "") return undefined;
       return value;
     }),
-  }).then((res) => {
-    console.log(res);
-    return res.data;
-  });
+  }).then((res) => res.data);
 
 export const useAuthStatus = (
   type: string,
