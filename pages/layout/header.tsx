@@ -63,8 +63,8 @@ const LeftItems = () => {
     //     ]
     const pages = [
         { name: '게시판', path: '/board' },
-        { name: '여행동행': '/' },
-        { name: '채팅': '/' }
+        { name: '여행동행', path: '/' },
+        { name: '채팅', path: '/' }
     ]
 
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
@@ -108,8 +108,8 @@ const LeftItems = () => {
                     }}
                 >
                     {pages.map((page) => (
-                        <MenuItem key={page} onClick={handleCloseNavMenu}>
-                            <Typography textAlign="center">{page}</Typography>
+                        <MenuItem key={page.name} onClick={handleCloseNavMenu}>
+                            <Typography textAlign="center">{page.name}</Typography>
                         </MenuItem>
                     ))}
                 </Menu>
@@ -117,11 +117,11 @@ const LeftItems = () => {
             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                 {pages.map((page) => (
                     <Button
-                        key={page.게시판}
+                        key={page.name}
                         onClick={handleCloseNavMenu}
                         sx={{ my: 2, color: 'white', display: 'block' }}
                     >
-                        {page.게시판}
+                        {page.name}
                     </Button>
                 ))}
             </Box>
