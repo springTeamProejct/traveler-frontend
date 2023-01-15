@@ -3,15 +3,17 @@ import { CONSTANTS } from "../../utils";
 import {
   UseQueryOptions,
   UseQueryResult,
+  useMutation,
   useQuery,
 } from "@tanstack/react-query";
+// 폰 인증은 재사용이 많을수도 있어서 Custom hooks 생성
 
 type AuthResultResponse = {
   status: string;
   data: JSON;
 };
 
-export const MutationSendAuthCode = (body: Object) =>
+const MutationSendAuthCode = (body: Object) =>
   axios({
     method: "post",
     url: `${CONSTANTS.SERVER_URL}/users/signup/authcode`,

@@ -10,7 +10,7 @@ import {
   MuiTelInputCountry,
   MuiTelInputInfo,
 } from "mui-tel-input";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { MuiOtpInput } from 'mui-one-time-password-input';
 import { useCountdownTimer } from "../../hooks/useCountdownTimer"
 import { MutationSendAuthCode, useAuthStatus } from "../../apis/auth/signup";
@@ -71,9 +71,9 @@ const AuthInput = ({ sendAuthBtn, setIsUser }: AuthInputProps) => {
     setValue(newValue);
   }
   const handleComplete = (finalValue: string) => {
+
     if (finalValue === '222222') {
       console.log('hello')
-
       // 회원인지 아닌지 확인
       if (false) {
         setIsUser('isUser');
@@ -112,6 +112,15 @@ const AuthButton = ({ viewAuthInput, setBtnClicked, setViewAuthInput }: AuthButt
 
   if (sendAuthcode.isLoading) return <p>Loading...</p>
   if (sendAuthcode.error) return <p>An error has occurred</p>
+  console.log('test');
+
+  const handleAuthButtonClick_ = useCallback(() => {
+    if (timeLeft === 0) {
+      setBtnClicked((value) => !value);
+      setViewAuthInput(true);
+      setTimeLeft(30);
+    }
+  }, [formattedTimeLeft, timeLeft]);
 
   const handleAuthButtonClick = () => {
     if (timeLeft === 0) {
@@ -130,10 +139,10 @@ const AuthButton = ({ viewAuthInput, setBtnClicked, setViewAuthInput }: AuthButt
       type="submit"
       variant="contained"
       disabled={timeLeft > 0 ? true : false}
-      onClick={handleAuthButtonClick}
+      onClick={handleAuthButtonClick_}
     >
       {
-        viewAuthInput // 0: 인증번호전송 >1: 재전송
+        viewAuthInput // 0: 인증번호전송, > 1: 재전송
           ? <>재전송 {formattedTimeLeft} </>
           : <>인증번호전송</>
       }
