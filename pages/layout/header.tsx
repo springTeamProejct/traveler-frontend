@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
     IconButton,
     Box,
@@ -85,23 +85,27 @@ const NotificationsButton = () => {
 };
 
 const RightItems = () => {
-    const { user } = useAuthContext();
-    const isLogin = (user !== null);
-    const isExistProfileImage = (user !== undefined && user !== null && user.profileUrl !== null);
+    const { profile } = useAuthContext();
+    const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
 	const router = useRouter();
-    const handleLoginClick = () => router.push('/login');
-    const handleProfileClick = () => {
 
-    }
+    useEffect(() => {
+        if (profile?.fileId) {
+            // 파일 아이디를 통해서 사진을 받아오는 로직 작성
+            // setProfileImageUrl('http://localhost:8000/laskdlaksdjlaksdj')
+        }
+    }, [profile]);
+    const handleLoginClick = () => router.push('/login');
+    const handleProfileClick = () => {}
 
     return (
         <>
-        { isLogin
+        { profile
             ? <>
                 <NotificationsButton />
                 <Tooltip title="Open settings">
                     <IconButton onClick={handleProfileClick} sx={{ p: 0 }}>
-                        {isExistProfileImage
+                        {profileImageUrl
                             ? <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
                             : <AccountCircleIcon style={{ height: '3rem', width: '3rem' }} />
                         }

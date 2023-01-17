@@ -2,14 +2,14 @@ import { Button, TextField } from '@mui/material';
 import { Box } from '@mui/system';
 import React from 'react';
 import {useRouter} from 'next/router'
-import { login } from '../../apis/auth';
+import { fetchProfile, login } from '../../apis/auth';
 import { useAuthContext } from '../../context/AuthContext';
 import * as Yup from 'yup';
 import { useFormik } from "formik";
 
 
 export default function Login() {
-  const { setInitToken } = useAuthContext();
+  const { setInitToken, setProfile } = useAuthContext();
 	const router = useRouter();
 
   const RegisterSchema = Yup.object().shape({
@@ -23,12 +23,14 @@ export default function Login() {
       password: '',
     },
     validationSchema: RegisterSchema,
-    onSubmit: values => {
+    onSubmit: async (values) => {
       console.log(values);
-      login(values).then(data => {
-        setInitToken(data);
-        router.push('/');
-      });
+      const loginResponseDto = await login(values);
+      setInitToken(loginResponseDto);
+      // 로그인 직후 프로필 정보를 가져오는 부분 백엔드 API가 완성되면 풀자
+      const profile = await fetchProfile(loginResponseDto.accessToken);
+      setProfile(profile);
+      router.push('/');
     },
   });
 
