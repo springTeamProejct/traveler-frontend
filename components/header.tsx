@@ -12,9 +12,9 @@ import {
 import Toolbar from "@mui/material/Toolbar";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { useAuthContext } from "../../context/AuthContext";
 import {useRouter} from 'next/router'
 import { Stack } from "@mui/system";
+import { useAuthContext } from "../context/AuthContext";
 
 const LeftItems = () => {
     const pages = [
