@@ -13,8 +13,7 @@ import {
 import React, { useCallback, useEffect, useState } from "react";
 import { MuiOtpInput } from 'mui-one-time-password-input';
 import { useCountdownTimer } from "../../hooks/useCountdownTimer"
-import { MutationSendAuthCode, useAuthStatus } from "../../apis/auth/signup";
-import { useMutation } from "@tanstack/react-query";
+import { useAuthMutation } from "../../apis/auth/signup";
 interface AuthButtonProps {
   viewAuthInput: boolean;
   setViewAuthInput: React.Dispatch<React.SetStateAction<boolean>>;
@@ -106,31 +105,17 @@ const AuthInput = ({ sendAuthBtn, setIsUser }: AuthInputProps) => {
 };
 
 const AuthButton = ({ viewAuthInput, setBtnClicked, setViewAuthInput }: AuthButtonProps) => {
-  const { timeLeft, formattedTimeLeft, setTimeLeft } = useCountdownTimer(0);
-
-  const sendAuthcode = useMutation(MutationSendAuthCode);
-
-  if (sendAuthcode.isLoading) return <p>Loading...</p>
-  if (sendAuthcode.error) return <p>An error has occurred</p>
-  console.log('test');
+  const { timeLeft: reSendTimeLeft, formattedTimeLeft: formattedReSendTimeLeft, setTimeLeft: setReSendTimeLeft } = useCountdownTimer(0);
+  const mutate = useAuthMutation('users/signup/authcode', 'PHONE', '01098598222', '');
 
   const handleAuthButtonClick_ = useCallback(() => {
-    if (timeLeft === 0) {
+    if (reSendTimeLeft === 0) {
       setBtnClicked((value) => !value);
       setViewAuthInput(true);
-      setTimeLeft(30);
+      setReSendTimeLeft(30);
+      mutate.mutate();
     }
-  }, [formattedTimeLeft, timeLeft]);
-
-  const handleAuthButtonClick = () => {
-    if (timeLeft === 0) {
-      setBtnClicked((value) => !value);
-      setViewAuthInput(true);
-      setTimeLeft(30);
-      // sendAuthcode.mutate(data);
-      // useAuthStatus("phone", "01098598222", "", {});
-    }
-  }
+  }, [formattedReSendTimeLeft, reSendTimeLeft]);
 
   return (
     <Button
@@ -138,12 +123,12 @@ const AuthButton = ({ viewAuthInput, setBtnClicked, setViewAuthInput }: AuthButt
       fullWidth
       type="submit"
       variant="contained"
-      disabled={timeLeft > 0 ? true : false}
+      disabled={reSendTimeLeft > 0 ? true : false}
       onClick={handleAuthButtonClick_}
     >
       {
         viewAuthInput // 0: 인증번호전송, > 1: 재전송
-          ? <>재전송 {formattedTimeLeft} </>
+          ? <>재전송 {formattedReSendTimeLeft} </>
           : <>인증번호전송</>
       }
     </Button >
