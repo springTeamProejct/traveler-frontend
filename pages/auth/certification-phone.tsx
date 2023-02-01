@@ -22,6 +22,7 @@ interface AuthButtonProps {
 interface AuthInputProps {
   setIsUser: React.Dispatch<React.SetStateAction<string>>;
   sendAuthBtn: boolean;
+  authCode: string;
 }
 interface CertificaationPhoneProps {
   setIsUser: React.Dispatch<React.SetStateAction<string>>;
@@ -31,6 +32,7 @@ export const CertificaationPhone = ({ setIsUser }: CertificaationPhoneProps) => 
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [viewAuthInput, setViewAuthInput] = useState<boolean>(false);
   const [btnClicked, setBtnClicked] = useState<boolean>(false);
+  const [authCode, setAuthCode] = useState<string>('123456');
 
   const handlePhoneNumberChange = (newPhone: string, info: MuiTelInputInfo) => {
     setPhoneNumber(newPhone);
@@ -52,14 +54,14 @@ export const CertificaationPhone = ({ setIsUser }: CertificaationPhoneProps) => 
         <AuthButton viewAuthInput={viewAuthInput} setBtnClicked={setBtnClicked} setViewAuthInput={setViewAuthInput} />
         {
           viewAuthInput &&
-          <AuthInput sendAuthBtn={btnClicked} setIsUser={setIsUser} />
+          <AuthInput sendAuthBtn={btnClicked} setIsUser={setIsUser} authCode={authCode} />
         }
       </Stack>
     </Container>
   );
 };
 
-const AuthInput = ({ sendAuthBtn, setIsUser }: AuthInputProps) => {
+const AuthInput = ({ sendAuthBtn, setIsUser, authCode }: AuthInputProps) => {
   const [value, setValue] = useState<string>('');
   const { timeLeft, formattedTimeLeft, setTimeLeft } = useCountdownTimer(0);
   useEffect(() => {
@@ -69,9 +71,8 @@ const AuthInput = ({ sendAuthBtn, setIsUser }: AuthInputProps) => {
   const handleChange = (newValue: string) => {
     setValue(newValue);
   }
-  const handleComplete = (finalValue: string) => {
-
-    if (finalValue === '222222') {
+  const handleComplete = (completedValue: string) => {
+    if (completedValue === authCode) {
       console.log('hello')
       // 회원인지 아닌지 확인
       if (false) {
@@ -95,7 +96,6 @@ const AuthInput = ({ sendAuthBtn, setIsUser }: AuthInputProps) => {
           onChange={handleChange}
           onComplete={handleComplete}
           length={6}
-          validateChar={(character: string, index: number) => true}
         />
         <a href="#" id="auth-count-down"> {formattedTimeLeft}
         </a>

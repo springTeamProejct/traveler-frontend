@@ -34,6 +34,7 @@ export const Signup = () => {
       email: '',
       password: '',
       birth: dayjs("2022-04-07"),
+      sex: false,
     },
     validationSchema: RegisterSchema,
     onSubmit: values => {
@@ -151,7 +152,6 @@ export const Signup = () => {
                 disableFuture
                 label="생년월일"
                 openTo="year"
-
                 views={["year", "month", "day"]}
                 onChange={(value) => {
                   value !== null ? formik.setFieldValue('birth', Date.parse(value)) : console.log('null');
@@ -167,6 +167,7 @@ export const Signup = () => {
               row
               aria-labelledby="demo-radio-buttons-group-label"
               name="radio-buttons-group"
+              value={formik.values.sex}
             >
               <FormControlLabel value="Male" control={<Radio />} label="남자" />
               <FormControlLabel value="Female" control={<Radio />} label="여자" />
@@ -175,7 +176,7 @@ export const Signup = () => {
           <Grid item xs={12}>
             <Button
               color="primary"
-              disabled={formik.isSubmitting}
+              // disabled={formik.isSubmitting}
               fullWidth
               size="large"
               type="submit"
