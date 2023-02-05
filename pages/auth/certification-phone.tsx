@@ -106,7 +106,7 @@ const AuthInput = ({ sendAuthBtn, setIsUser, authCode }: AuthInputProps) => {
 
 const AuthButton = ({ viewAuthInput, setBtnClicked, setViewAuthInput }: AuthButtonProps) => {
   const { timeLeft: reSendTimeLeft, formattedTimeLeft: formattedReSendTimeLeft, setTimeLeft: setReSendTimeLeft } = useCountdownTimer(0);
-  const mutate = useAuthMutation('users/signup/authcode', 'PHONE', '01098598222', '');
+  const mutate = useAuthMutation('users/signup/authcode', 'phoneNum', '01098598222');
 
   const handleAuthButtonClick_ = useCallback(() => {
     if (reSendTimeLeft === 0) {
