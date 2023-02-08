@@ -18,3 +18,23 @@ export const useAuthMutation = (
     });
   });
 };
+
+export const useValidateMutation = (
+  queryKey: string,
+  type: string,
+  identifier: string,
+  code: string
+) => {
+  const vaildateData = JSON.parse(
+    `{"${type}": "${identifier}", "code": "${code}"}`
+  );
+
+  return useMutation([queryKey], async () => {
+    await axios({
+      method: "post",
+      url: CONSTANTS.SERVER_URL + queryKey,
+      headers: { "Content-Type": "application/json" },
+      data: vaildateData,
+    });
+  });
+};

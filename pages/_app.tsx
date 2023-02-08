@@ -5,6 +5,7 @@ import {
   QueryClientProvider,
   QueryClient
 } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 const queryClient = new QueryClient();
 
@@ -15,6 +16,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <RecoilRoot>
         <Component {...pageProps} />
       </RecoilRoot>
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 }

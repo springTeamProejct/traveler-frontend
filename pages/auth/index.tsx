@@ -3,6 +3,7 @@ import { CertificaationPhone } from './certification-phone';
 import { Signin } from './signin';
 import { Signup } from './signup';
 
+// Page Controller
 export default function AuthPageController() {
   const [authPage, setAuthPage] = useState('firstPage');
 

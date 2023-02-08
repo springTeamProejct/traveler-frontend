@@ -13,16 +13,18 @@ import {
 import React, { useCallback, useEffect, useState } from "react";
 import { MuiOtpInput } from 'mui-one-time-password-input';
 import { useCountdownTimer } from "../../hooks/useCountdownTimer"
-import { useAuthMutation } from "../../apis/auth/signup";
+import { useAuthMutation, useValidateMutation } from "../../apis/auth/signup";
+import { ErrorDefinition } from "../../utils/error";
+
 interface AuthCodeSendBtnProps {
   showAuthCodeInput: boolean;
   setShowAuthCodeInput: React.Dispatch<React.SetStateAction<boolean>>;
   setBtnClicked: React.Dispatch<React.SetStateAction<boolean>>;
 }
 interface AuthCodeInputProps {
-  setIsUser: React.Dispatch<React.SetStateAction<string>>;
   sendAuthBtn: boolean;
   authCode: string;
+  setAuthCode: React.Dispatch<React.SetStateAction<string>>;
 }
 interface CertificaationPhoneProps {
   setIsUser: React.Dispatch<React.SetStateAction<string>>;
@@ -31,20 +33,34 @@ interface PhoneNumberInputPops {
   phoneNumber: string;
   setPhoneNumber: React.Dispatch<React.SetStateAction<string>>;
 }
-// This Page Main Controller
+// This Page Function Controller
 export const CertificaationPhone = ({ setIsUser }: CertificaationPhoneProps) => {
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [ShowAuthCodeInput, setShowAuthCodeInput] = useState<boolean>(false);
   const [btnClicked, setBtnClicked] = useState<boolean>(false);
   const [authCode, setAuthCode] = useState<string>('123456');
   // 일단 한국만 폰인증.
-  let koreanPhoneNumber = (phoneNumber.slice(3)).replaceAll(' ', '');
-  const mutate = useAuthMutation('users/signup/authcode', 'phoneNum', koreanPhoneNumber);
+  const koreanPhoneNumber = (phoneNumber.slice(3)).replaceAll(' ', '');
+  const sendMsgMutation = useAuthMutation('users/signup/authcode', 'phoneNum', koreanPhoneNumber);
+  // 인증번호입력
+  const validateMutation = useValidateMutation('users/signup/authcode/validate', 'phoneNum', koreanPhoneNumber, authCode);
 
   // Send Auth Code
   useEffect(() => {
-    // mutate.mutate();
+    // sendMsgMutation.mutate();
   }, [btnClicked])
+
+  // 번호 검증
+  useEffect(() => {
+    validateMutation.mutate();
+    if (validateMutation.isError) {
+      alert(ErrorDefinition[validateMutation.failureReason.response.data].message);
+      if (ErrorDefinition[validateMutation.failureReason.response.data].note.setIsUser) setIsUser(ErrorDefinition[validateMutation.failureReason.response.data].note.setIsUser);
+    }
+    else if (validateMutation.isSuccess) {
+      setIsUser("notUser"); // Go To SignUp Page
+    }
+  }, [authCode]);
 
   return (
     <Container maxWidth="xs">
@@ -53,7 +69,7 @@ export const CertificaationPhone = ({ setIsUser }: CertificaationPhoneProps) => 
         <AuthCodeSendBtn showAuthCodeInput={ShowAuthCodeInput} setBtnClicked={setBtnClicked} setShowAuthCodeInput={setShowAuthCodeInput} />
         {
           ShowAuthCodeInput &&
-          <AuthCodeInput sendAuthBtn={btnClicked} setIsUser={setIsUser} authCode={authCode} />
+          <AuthCodeInput sendAuthBtn={btnClicked} authCode={authCode} setAuthCode={setAuthCode} />
         }
       </Stack>
     </Container>
@@ -78,8 +94,8 @@ const PhoneNumberInput = ({ phoneNumber, setPhoneNumber }: PhoneNumberInputPops)
       excludedCountries={excludedCountries} />);
 };
 
-const AuthCodeInput = ({ sendAuthBtn, setIsUser, authCode }: AuthCodeInputProps) => {
-  const [value, setValue] = useState<string>('');
+const AuthCodeInput = ({ sendAuthBtn, setAuthCode }: AuthCodeInputProps) => {
+  const [value, setValue] = useState('');
   const { timeLeft, formattedTimeLeft, setTimeLeft } = useCountdownTimer(0);
   useEffect(() => {
     setTimeLeft(180);
@@ -89,16 +105,7 @@ const AuthCodeInput = ({ sendAuthBtn, setIsUser, authCode }: AuthCodeInputProps)
     setValue(newValue);
   }
   const handleComplete = (completedValue: string) => {
-    if (completedValue === authCode) {
-      console.log('hello')
-      // 회원인지 아닌지 확인
-      if (false) {
-        setIsUser('isUser');
-      }
-      else {
-        setIsUser('notUser')
-      }
-    }
+    setAuthCode(completedValue);
   }
 
   return (
@@ -119,8 +126,7 @@ const AuthCodeInput = ({ sendAuthBtn, setIsUser, authCode }: AuthCodeInputProps)
       </FormControl>
     </>
   );
-};
-
+}
 const AuthCodeSendBtn = ({ showAuthCodeInput, setBtnClicked, setShowAuthCodeInput }: AuthCodeSendBtnProps) => {
   const { timeLeft: reSendTimeLeft, formattedTimeLeft: formattedReSendTimeLeft, setTimeLeft: setReSendTimeLeft } = useCountdownTimer(0);
 
