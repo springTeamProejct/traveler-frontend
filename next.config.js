@@ -12,6 +12,9 @@ const nextConfig = {
       },
     ],
   },
+  env: {
+    BACKEND_ADDRESS: 'http://localhost:8000',
+  },
 }
 
 module.exports = nextConfig

@@ -1,5 +1,6 @@
 import Head from 'next/head'
 import { useEffect } from 'react';
+import { useAuthContext } from '../context/AuthContext';
 
 
 export default function Home() {
@@ -26,10 +27,9 @@ export default function Home() {
     }
 
   }, [])
-
+  const { accessToken } = useAuthContext();
 
   return (
-    <>
-    </>
+    <p>메인페이지accessToken: {accessToken?.toString()}</p>
   )
 }
