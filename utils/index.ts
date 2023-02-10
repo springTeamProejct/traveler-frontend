@@ -1,4 +1,4 @@
-import { KakaoOAuthDatas } from "./oauth-kakao";
+import { KakaoOAuthDatas, NaverOAuthDatas } from "./oauth";
 import { CONSTANTS } from "./constants";
 
-export { KakaoOAuthDatas, CONSTANTS }
+export { KakaoOAuthDatas, CONSTANTS, NaverOAuthDatas }
