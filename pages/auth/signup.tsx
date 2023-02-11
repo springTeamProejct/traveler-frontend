@@ -19,7 +19,7 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useFormik } from "formik";
 
-export const Signup = () => {
+export default function Signup() {
   const [birth, setBirth] = useState<Dayjs | null>(dayjs("2022-04-07"));
 
   const RegisterSchema = Yup.object().shape({

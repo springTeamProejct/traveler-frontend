@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { CertificaationPhone } from './certification-phone';
 import { Signin } from './signin';
 import { Signup } from './signup';
+import router from 'next/router';
 
 // Page Controller
 export default function AuthPageController() {
@@ -11,9 +12,9 @@ export default function AuthPageController() {
     return <CertificaationPhone setIsUser={setAuthPage} />
   }
   else if (authPage === 'notUser') {
-    return <Signup />
+    return router.push('/auth/signup');
   }
   else if (authPage === 'isUser') {
-    return <Signin />
+    return router.push('/auth/signin');
   }
 } 
