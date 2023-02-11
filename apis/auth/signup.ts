@@ -7,7 +7,7 @@ export const useAuthMutation = (
   key: string,
   value: string
 ) => {
-  const authInfo = JSON.parse(`{"${key}": "${value}"}`);
+  const authInfo = { [key]: value };
 
   return useMutation([queryKey], async () => {
     await axios({
@@ -25,9 +25,7 @@ export const useValidateMutation = (
   identifier: string,
   code: string
 ) => {
-  const vaildateData = JSON.parse(
-    `{"${type}": "${identifier}", "code": "${code}"}`
-  );
+  const vaildateData = { [type]: identifier, code: code };
 
   return useMutation([queryKey], async () => {
     await axios({

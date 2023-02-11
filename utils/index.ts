@@ -1,5 +1,4 @@
-import { KakaoOAuthDatas, NaverOAuthDatas } from "./oauth";
-import { CONSTANTS } from "./constants";
+import { CONSTANTS, KakaoOAuthDatas, NaverOAuthDatas } from "./constants";
 import { useEffect, useRef } from "react";
 
 const useDidUpdateEffect = (fn: () => void, inputs: any[]) => {
