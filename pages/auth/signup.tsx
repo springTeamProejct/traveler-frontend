@@ -12,6 +12,8 @@ import {
   Radio,
   FormLabel,
   FormControlLabel,
+  FormControl,
+  FormHelperText,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import TextField from "@mui/material/TextField";
@@ -27,6 +29,14 @@ export default function Signup({ phoneNumber }: SignUpProps) {
     nickName: Yup.string().min(2, '너무 짧아요.').max(50, '너무 길어요.').required('필수항목 이예요.'),
     email: Yup.string().email('이메일 형식으로 입력해주세요.').required('필수항목 이예요.'),
     password: Yup.string().required('필수항목 이예요.'),
+    gender: Yup.string().required('필수항목 이예요.'),
+    confirmPassword: Yup.string().when("password", {
+      is: (val: string) => (val && val.length > 0 ? true : false),
+      then: Yup.string().oneOf(
+        [Yup.ref("password")],
+        "비밀번호가 다릅니다."
+      )
+    })
   });
 
   const formik = useFormik({
@@ -35,8 +45,9 @@ export default function Signup({ phoneNumber }: SignUpProps) {
       password: '!!tetetetadfa',
       nickName: '이환주',
       birth: dayjs("2022-04-02"),
-      gender: false,
-      phoneNum: phoneNumber
+      gender: "",
+      phoneNum: phoneNumber,
+      confirmPassword: '!!tetetadfa'
     },
     validationSchema: RegisterSchema,
     onSubmit: values => {
@@ -141,9 +152,16 @@ export default function Signup({ phoneNumber }: SignUpProps) {
           <Grid item xs={12}>
             <TextField
               id="outlined-basic"
-              type="password"
+              type="Password"
+              name="confirmPassword"
               label="비밀번호 확인"
               variant="outlined"
+              // confirmPassword
+              error={Boolean(formik.errors.confirmPassword)}
+              helperText={formik.touched.confirmPassword && formik.errors.confirmPassword}
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
+              value={formik.values.confirmPassword}
               fullWidth
             />
           </Grid>
@@ -163,17 +181,21 @@ export default function Signup({ phoneNumber }: SignUpProps) {
             </LocalizationProvider>
           </Grid>
           <Grid item xs={6}>
-            <FormLabel id="demo-radio-buttons-group-label">성별</FormLabel>
-            <RadioGroup
-              row
-              aria-labelledby="demo-radio-buttons-group-label"
-              name="radio-buttons-group"
-              onChange={formik.handleChange}
-              value={formik.values.gender}
-            >
-              <FormControlLabel value="Male" name="gender" control={<Radio />} label="남자" />
-              <FormControlLabel value="Female" name="gender" control={<Radio />} label="여자" />
-            </RadioGroup>
+            <FormControl error={Boolean(formik.errors.gender)} variant="standard">
+              <FormLabel id="demo-radio-buttons-group-label">성별</FormLabel>
+              <RadioGroup
+                row
+                aria-labelledby="demo-radio-buttons-group-label"
+                name="radio-buttons-group"
+                onChange={formik.handleChange}
+                value={formik.values.gender}
+              >
+                <FormControlLabel value="Male" name="gender" control={<Radio />} label="남자" />
+                <FormControlLabel value="Female" name="gender" control={<Radio />} label="여자" />
+                <FormHelperText>{formik.errors.gender}</FormHelperText>
+              </RadioGroup>
+            </FormControl>
+
           </Grid>
           <Grid item xs={12}>
             <Button
@@ -189,6 +211,6 @@ export default function Signup({ phoneNumber }: SignUpProps) {
           </Grid>
         </Grid>
       </form>
-    </Container>
+    </Container >
   );
 };
