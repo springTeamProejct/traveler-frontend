@@ -15,7 +15,6 @@ import { MuiOtpInput } from 'mui-one-time-password-input';
 import { useCountdownTimer } from "../../hooks/useCountdownTimer"
 import { useAuthMutation, useValidateMutation } from "../../apis/auth/signup";
 import { ErrorDefinition } from "../../utils/error";
-import { useDidUpdateEffect } from "../../utils";
 
 interface AuthCodeSendBtnProps {
   showAuthCodeInput: boolean;
@@ -24,54 +23,23 @@ interface AuthCodeSendBtnProps {
 }
 interface AuthCodeInputProps {
   sendAuthBtn: boolean;
-  authCode: string;
-  setAuthCode: React.Dispatch<React.SetStateAction<string>>;
+  phoneNumber: string;
+  setIsUser: React.Dispatch<React.SetStateAction<string>>;
+  setPhoneNumberForSignup: React.Dispatch<React.SetStateAction<string>>;
 }
 interface CertificaationPhoneProps {
   setIsUser: React.Dispatch<React.SetStateAction<string>>;
   setPhoneNumberForSignup: React.Dispatch<React.SetStateAction<string>>;
 }
-interface PhoneNumberInputPops {
+interface PhoneNumberInputProps {
   phoneNumber: string;
   setPhoneNumber: React.Dispatch<React.SetStateAction<string>>;
 }
 // This Page Function Controller
 export const CertificaationPhone = ({ setIsUser, setPhoneNumberForSignup }: CertificaationPhoneProps) => {
-  const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [ShowAuthCodeInput, setShowAuthCodeInput] = useState<boolean>(false);
   const [btnClicked, setBtnClicked] = useState<boolean>(false);
-  const [authCode, setAuthCode] = useState<string>('123456');
-  // 일단 한국만 폰인증.
-  const koreanPhoneNumber = (phoneNumber.slice(3)).replaceAll(' ', '');
-  const sendMsgMutation = useAuthMutation('users/signup/authcode', 'phoneNum', koreanPhoneNumber);
-  // 인증번호입력
-  const validateMutation = useValidateMutation('users/signup/authcode/validate', 'phoneNum', koreanPhoneNumber, authCode);
-  // const didMountRef = useRef(false);
-
-  useDidUpdateEffect(() => {
-    sendMsgMutation.mutate();
-    if (sendMsgMutation.isLoading) {
-      return;
-    }
-  }, [btnClicked])
-  // Send Auth Code
-
-  // 번호 검증
-  useDidUpdateEffect(() => {
-    validateMutation.mutate();
-    if (validateMutation.isLoading) {
-      return;
-    }
-    else if (validateMutation.isError) {
-      const errorData = ErrorDefinition[validateMutation.failureReason.response.data];
-      alert(errorData.message);
-      // if (errorData.note.setIsUser) setIsUser(errorData.note.setIsUser);
-    }
-    else if (validateMutation.isSuccess) {
-      setPhoneNumberForSignup(phoneNumber);
-      // setIsUser("notUser"); // Go To SignUp Page
-    }
-  }, [authCode]);
+  const [phoneNumber, setPhoneNumber] = useState("");
 
   return (
     <Container maxWidth="xs">
@@ -80,17 +48,26 @@ export const CertificaationPhone = ({ setIsUser, setPhoneNumberForSignup }: Cert
         <AuthCodeSendBtn showAuthCodeInput={ShowAuthCodeInput} setBtnClicked={setBtnClicked} setShowAuthCodeInput={setShowAuthCodeInput} />
         {
           ShowAuthCodeInput &&
-          <AuthCodeInput sendAuthBtn={btnClicked} authCode={authCode} setAuthCode={setAuthCode} />
+          <AuthCodeInput sendAuthBtn={btnClicked} phoneNumber={phoneNumber} setIsUser={setIsUser} setPhoneNumberForSignup={setPhoneNumberForSignup} />
         }
       </Stack>
     </Container>
   );
 };
 
-const PhoneNumberInput = ({ phoneNumber, setPhoneNumber }: PhoneNumberInputPops) => {
+const PhoneNumberInput = ({ phoneNumber, setPhoneNumber }: PhoneNumberInputProps) => {
+  const [] = useState<string>("");
   const continents: MuiTelInputContinent[] = ["AS"];
   const excludedCountries: MuiTelInputCountry[] = [];
+  // 일단 한국만 폰인증.
+  const koreanPhoneNumber = (phoneNumber.slice(3)).replaceAll(' ', '');
+  const sendMsgMutation = useAuthMutation('users/signup/authcode', 'phoneNum', koreanPhoneNumber);
 
+  const handleOnClick = () => {
+    sendMsgMutation.mutate();
+    if (sendMsgMutation.isLoading)
+      return;
+  }
   const handlePhoneNumberChange = (newPhone: string, info: MuiTelInputInfo) => {
     setPhoneNumber(newPhone);
   };
@@ -102,21 +79,42 @@ const PhoneNumberInput = ({ phoneNumber, setPhoneNumber }: PhoneNumberInputPops)
       value={phoneNumber}
       onChange={handlePhoneNumberChange}
       continents={continents}
-      excludedCountries={excludedCountries} />);
+      excludedCountries={excludedCountries}
+      onClick={handleOnClick} />);
 };
 
-const AuthCodeInput = ({ sendAuthBtn, setAuthCode }: AuthCodeInputProps) => {
+const AuthCodeInput = ({ sendAuthBtn, phoneNumber, setIsUser, setPhoneNumberForSignup }: AuthCodeInputProps) => {
   const [value, setValue] = useState('');
   const { timeLeft, formattedTimeLeft, setTimeLeft } = useCountdownTimer(0);
+  const [authCode, setAuthCode] = useState<string>('123456');
+  // 한국 폰번호
+  const koreanPhoneNumber = (phoneNumber.slice(3)).replaceAll(' ', '');
+  const validateMutation = useValidateMutation('users/signup/authcode/validate', 'phoneNum', koreanPhoneNumber, authCode);
+
   useEffect(() => {
     setTimeLeft(180);
   }, [sendAuthBtn]);
-
   const handleChange = (newValue: string) => {
     setValue(newValue);
   }
   const handleComplete = (completedValue: string) => {
     setAuthCode(completedValue);
+    validateMutation.mutate();
+    if (validateMutation.isLoading) {
+      console.log("isLoading")
+      return;
+    }
+    else if (validateMutation.isError) {
+      console.log("isError")
+      const errorData = ErrorDefinition[validateMutation.failureReason.response.data];
+      if (errorData) alert(errorData.message);
+      // if (errorData.note.setIsUser) setIsUser(errorData.note.setIsUser);
+    }
+    else if (validateMutation.isSuccess) {
+      console.log("isSuccess")
+      setPhoneNumberForSignup(koreanPhoneNumber);
+      // setIsUser("notUser"); // Go To SignUp Page
+    }
   }
 
   return (
