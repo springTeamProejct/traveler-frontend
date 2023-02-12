@@ -1,13 +1,19 @@
-import { Container } from '@mui/system'
-import React from 'react'
-import { CertificaationPhone } from './certification-phone'
+import React, { useState } from 'react'
+import { CertificaationPhone } from './certification-phone';
+import { Signin } from './signin';
+import { Signup } from './signup';
 
-export const RegisterPageController = () => {
-  return (
-    <Container maxWidth="xs">
-        <CertificaationPhone/>
-    </Container>
-  )
-}
+// Page Controller
+export default function AuthPageController() {
+  const [authPage, setAuthPage] = useState('firstPage');
 
-export default RegisterPageController;
+  if (authPage === 'firstPage') {
+    return <CertificaationPhone setIsUser={setAuthPage} />
+  }
+  else if (authPage === 'notUser') {
+    return <Signup />
+  }
+  else if (authPage === 'isUser') {
+    return <Signin />
+  }
+} 
