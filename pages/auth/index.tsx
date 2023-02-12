@@ -1,18 +1,18 @@
 import React, { useState } from 'react'
 import { CertificaationPhone } from './certification-phone';
-import { Signin } from './signin';
-import { Signup } from './signup';
 import router from 'next/router';
+import Signup from './signup';
 
 // Page Controller
 export default function AuthPageController() {
   const [authPage, setAuthPage] = useState('firstPage');
+  const [phoneNumberForSignup, setPhoneNumberForSignup] = useState('No Phone Number');
 
   if (authPage === 'firstPage') {
-    return <CertificaationPhone setIsUser={setAuthPage} />
+    return <CertificaationPhone setIsUser={setAuthPage} setPhoneNumberForSignup={setPhoneNumberForSignup} />
   }
   else if (authPage === 'notUser') {
-    return router.push('/auth/signup');
+    return <Signup phoneNumber={phoneNumberForSignup} />
   }
   else if (authPage === 'isUser') {
     return router.push('/auth/signin');

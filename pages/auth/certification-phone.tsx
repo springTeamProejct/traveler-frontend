@@ -29,13 +29,14 @@ interface AuthCodeInputProps {
 }
 interface CertificaationPhoneProps {
   setIsUser: React.Dispatch<React.SetStateAction<string>>;
+  setPhoneNumberForSignup: React.Dispatch<React.SetStateAction<string>>;
 }
 interface PhoneNumberInputPops {
   phoneNumber: string;
   setPhoneNumber: React.Dispatch<React.SetStateAction<string>>;
 }
 // This Page Function Controller
-export const CertificaationPhone = ({ setIsUser }: CertificaationPhoneProps) => {
+export const CertificaationPhone = ({ setIsUser, setPhoneNumberForSignup }: CertificaationPhoneProps) => {
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [ShowAuthCodeInput, setShowAuthCodeInput] = useState<boolean>(false);
   const [btnClicked, setBtnClicked] = useState<boolean>(false);
@@ -45,24 +46,30 @@ export const CertificaationPhone = ({ setIsUser }: CertificaationPhoneProps) => 
   const sendMsgMutation = useAuthMutation('users/signup/authcode', 'phoneNum', koreanPhoneNumber);
   // 인증번호입력
   const validateMutation = useValidateMutation('users/signup/authcode/validate', 'phoneNum', koreanPhoneNumber, authCode);
-  const [defenseInitRendering, setDefenseInitRendering] = useState([false, false]);
   // const didMountRef = useRef(false);
 
   useDidUpdateEffect(() => {
     sendMsgMutation.mutate();
+    if (sendMsgMutation.isLoading) {
+      return;
+    }
   }, [btnClicked])
   // Send Auth Code
 
   // 번호 검증
   useDidUpdateEffect(() => {
     validateMutation.mutate();
-    if (validateMutation.isError) {
+    if (validateMutation.isLoading) {
+      return;
+    }
+    else if (validateMutation.isError) {
       const errorData = ErrorDefinition[validateMutation.failureReason.response.data];
       alert(errorData.message);
-      if (errorData.note.setIsUser) setIsUser(errorData.note.setIsUser);
+      // if (errorData.note.setIsUser) setIsUser(errorData.note.setIsUser);
     }
     else if (validateMutation.isSuccess) {
-      setIsUser("notUser"); // Go To SignUp Page
+      setPhoneNumberForSignup(phoneNumber);
+      // setIsUser("notUser"); // Go To SignUp Page
     }
   }, [authCode]);
 
@@ -110,7 +117,6 @@ const AuthCodeInput = ({ sendAuthBtn, setAuthCode }: AuthCodeInputProps) => {
   }
   const handleComplete = (completedValue: string) => {
     setAuthCode(completedValue);
-    console.log("completedValue");
   }
 
   return (

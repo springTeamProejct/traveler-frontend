@@ -18,10 +18,11 @@ import TextField from "@mui/material/TextField";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useFormik } from "formik";
+interface SignUpProps {
+  phoneNumber: string;
+}
 
-export default function Signup() {
-  const [birth, setBirth] = useState<Dayjs | null>(dayjs("2022-04-07"));
-
+export default function Signup({ phoneNumber }: SignUpProps) {
   const RegisterSchema = Yup.object().shape({
     nickName: Yup.string().min(2, '너무 짧아요.').max(50, '너무 길어요.').required('필수항목 이예요.'),
     email: Yup.string().email('이메일 형식으로 입력해주세요.').required('필수항목 이예요.'),
@@ -30,15 +31,16 @@ export default function Signup() {
 
   const formik = useFormik({
     initialValues: {
-      nickName: '',
-      email: '',
-      password: '',
-      birth: dayjs("2022-04-07"),
-      sex: false,
+      email: 'hwanju1596@gmail.com',
+      password: '!!tetetetadfa',
+      nickName: '이환주',
+      birth: dayjs("2022-04-02"),
+      gender: false,
+      phoneNum: phoneNumber
     },
     validationSchema: RegisterSchema,
     onSubmit: values => {
-      alert(JSON.stringify(values, null, 2));
+      // alert(JSON.stringify(values, null, 2));
       console.log(JSON.stringify(values, null, 2));
     },
   });
@@ -92,7 +94,6 @@ export default function Signup() {
             <Button
               color="primary"
               fullWidth
-              type="submit"
               variant="contained"
               // onClick={set}
               sx={{ height: "100%", fontSize: "11px" }}
@@ -167,10 +168,11 @@ export default function Signup() {
               row
               aria-labelledby="demo-radio-buttons-group-label"
               name="radio-buttons-group"
-              value={formik.values.sex}
+              onChange={formik.handleChange}
+              value={formik.values.gender}
             >
-              <FormControlLabel value="Male" control={<Radio />} label="남자" />
-              <FormControlLabel value="Female" control={<Radio />} label="여자" />
+              <FormControlLabel value="Male" name="gender" control={<Radio />} label="남자" />
+              <FormControlLabel value="Female" name="gender" control={<Radio />} label="여자" />
             </RadioGroup>
           </Grid>
           <Grid item xs={12}>
