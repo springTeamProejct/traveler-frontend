@@ -18,6 +18,7 @@ import { ErrorDefinition } from "../../utils/error";
 
 interface AuthCodeSendBtnProps {
   showAuthCodeInput: boolean;
+  phoneNumber: string;
   setShowAuthCodeInput: React.Dispatch<React.SetStateAction<boolean>>;
   setBtnClicked: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -45,7 +46,7 @@ export const CertificaationPhone = ({ setIsUser, setPhoneNumberForSignup }: Cert
     <Container maxWidth="xs">
       <Stack spacing={2}>
         <PhoneNumberInput phoneNumber={phoneNumber} setPhoneNumber={setPhoneNumber} />
-        <AuthCodeSendBtn showAuthCodeInput={ShowAuthCodeInput} setBtnClicked={setBtnClicked} setShowAuthCodeInput={setShowAuthCodeInput} />
+        <AuthCodeSendBtn showAuthCodeInput={ShowAuthCodeInput} phoneNumber={phoneNumber} setBtnClicked={setBtnClicked} setShowAuthCodeInput={setShowAuthCodeInput} />
         {
           ShowAuthCodeInput &&
           <AuthCodeInput sendAuthBtn={btnClicked} phoneNumber={phoneNumber} setIsUser={setIsUser} setPhoneNumberForSignup={setPhoneNumberForSignup} />
@@ -60,14 +61,7 @@ const PhoneNumberInput = ({ phoneNumber, setPhoneNumber }: PhoneNumberInputProps
   const continents: MuiTelInputContinent[] = ["AS"];
   const excludedCountries: MuiTelInputCountry[] = [];
   // 일단 한국만 폰인증.
-  const koreanPhoneNumber = (phoneNumber.slice(3)).replaceAll(' ', '');
-  const sendMsgMutation = useAuthMutation('users/signup/authcode', 'phoneNum', koreanPhoneNumber);
 
-  const handleOnClick = () => {
-    sendMsgMutation.mutate();
-    if (sendMsgMutation.isLoading)
-      return;
-  }
   const handlePhoneNumberChange = (newPhone: string, info: MuiTelInputInfo) => {
     setPhoneNumber(newPhone);
   };
@@ -79,8 +73,7 @@ const PhoneNumberInput = ({ phoneNumber, setPhoneNumber }: PhoneNumberInputProps
       value={phoneNumber}
       onChange={handlePhoneNumberChange}
       continents={continents}
-      excludedCountries={excludedCountries}
-      onClick={handleOnClick} />);
+      excludedCountries={excludedCountries} />);
 };
 
 const AuthCodeInput = ({ sendAuthBtn, phoneNumber, setIsUser, setPhoneNumberForSignup }: AuthCodeInputProps) => {
@@ -100,6 +93,9 @@ const AuthCodeInput = ({ sendAuthBtn, phoneNumber, setIsUser, setPhoneNumberForS
   const handleComplete = (completedValue: string) => {
     setAuthCode(completedValue);
     validateMutation.mutate();
+    if (validateMutation.isIdle) {
+      console.log("isIdle ")
+    }
     if (validateMutation.isLoading) {
       console.log("isLoading")
       return;
@@ -137,8 +133,10 @@ const AuthCodeInput = ({ sendAuthBtn, phoneNumber, setIsUser, setPhoneNumberForS
   );
 }
 
-const AuthCodeSendBtn = ({ showAuthCodeInput, setBtnClicked, setShowAuthCodeInput }: AuthCodeSendBtnProps) => {
+const AuthCodeSendBtn = ({ showAuthCodeInput, phoneNumber, setBtnClicked, setShowAuthCodeInput }: AuthCodeSendBtnProps) => {
   const { timeLeft: reSendTimeLeft, formattedTimeLeft: formattedReSendTimeLeft, setTimeLeft: setReSendTimeLeft } = useCountdownTimer(0);
+  const koreanPhoneNumber = (phoneNumber.slice(3)).replaceAll(' ', '');
+  const sendMsgMutation = useAuthMutation('users/signup/authcode', 'phoneNum', koreanPhoneNumber);
 
   // 수정필요.
   const handleAuthButtonClick = useCallback(() => {
@@ -146,6 +144,9 @@ const AuthCodeSendBtn = ({ showAuthCodeInput, setBtnClicked, setShowAuthCodeInpu
       setBtnClicked((value) => !value);
       setShowAuthCodeInput(true);
       setReSendTimeLeft(30);
+      sendMsgMutation.mutate();
+      if (sendMsgMutation.isLoading)
+        return;
     }
   }, [formattedReSendTimeLeft, reSendTimeLeft]);
 
