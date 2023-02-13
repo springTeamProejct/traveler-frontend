@@ -13,7 +13,7 @@ import {
 import React, { useCallback, useEffect, useState } from "react";
 import { MuiOtpInput } from 'mui-one-time-password-input';
 import { useCountdownTimer } from "../../hooks/useCountdownTimer"
-import { useAuthMutation, useValidateMutation } from "../../apis/auth/signup";
+import { validateAuthCode, sendAuthCode } from "../../apis/auth/signup";
 import { ErrorDefinition } from "../../utils/error";
 
 interface AuthCodeSendBtnProps {
@@ -79,10 +79,8 @@ const PhoneNumberInput = ({ phoneNumber, setPhoneNumber }: PhoneNumberInputProps
 const AuthCodeInput = ({ sendAuthBtn, phoneNumber, setIsUser, setPhoneNumberForSignup }: AuthCodeInputProps) => {
   const [value, setValue] = useState('');
   const { timeLeft, formattedTimeLeft, setTimeLeft } = useCountdownTimer(0);
-  const [authCode, setAuthCode] = useState<string>('123456');
   // 한국 폰번호
   const koreanPhoneNumber = (phoneNumber.slice(3)).replaceAll(' ', '');
-  const validateMutation = useValidateMutation('users/signup/authcode/validate', 'phoneNum', koreanPhoneNumber, authCode);
 
   useEffect(() => {
     setTimeLeft(180);
@@ -90,26 +88,21 @@ const AuthCodeInput = ({ sendAuthBtn, phoneNumber, setIsUser, setPhoneNumberForS
   const handleChange = (newValue: string) => {
     setValue(newValue);
   }
-  const handleComplete = (completedValue: string) => {
-    setAuthCode(completedValue);
-    validateMutation.mutate();
-    if (validateMutation.isIdle) {
-      console.log("isIdle ")
+
+  const handleComplete = async (completedValue: string) => {
+    // setAuthCode(completedValue);
+    const responseData = await validateAuthCode('phoneNum', koreanPhoneNumber, completedValue);
+    console.log(responseData.response);
+    if (responseData.response) {
+      // fail
+      const errorData = ErrorDefinition[responseData.response.data];
+      alert(errorData.message);
+      console.log("🚀 ~ file: certification-phone.tsx:116 ~ handleComplete ~ errorData", errorData)
     }
-    if (validateMutation.isLoading) {
-      console.log("isLoading")
-      return;
-    }
-    else if (validateMutation.isError) {
-      console.log("isError")
-      const errorData = ErrorDefinition[validateMutation.failureReason.response.data];
-      if (errorData) alert(errorData.message);
-      // if (errorData.note.setIsUser) setIsUser(errorData.note.setIsUser);
-    }
-    else if (validateMutation.isSuccess) {
-      console.log("isSuccess")
+    else if (responseData.response === undefined) {
+      // success
       setPhoneNumberForSignup(koreanPhoneNumber);
-      // setIsUser("notUser"); // Go To SignUp Page
+      setIsUser("notUser"); // Go To SignUp Page
     }
   }
 
@@ -136,19 +129,15 @@ const AuthCodeInput = ({ sendAuthBtn, phoneNumber, setIsUser, setPhoneNumberForS
 const AuthCodeSendBtn = ({ showAuthCodeInput, phoneNumber, setBtnClicked, setShowAuthCodeInput }: AuthCodeSendBtnProps) => {
   const { timeLeft: reSendTimeLeft, formattedTimeLeft: formattedReSendTimeLeft, setTimeLeft: setReSendTimeLeft } = useCountdownTimer(0);
   const koreanPhoneNumber = (phoneNumber.slice(3)).replaceAll(' ', '');
-  const sendMsgMutation = useAuthMutation('users/signup/authcode', 'phoneNum', koreanPhoneNumber);
 
-  // 수정필요.
-  const handleAuthButtonClick = useCallback(() => {
+  const handleAuthButtonClick = async () => {
     if (reSendTimeLeft === 0) {
       setBtnClicked((value) => !value);
       setShowAuthCodeInput(true);
       setReSendTimeLeft(30);
-      sendMsgMutation.mutate();
-      if (sendMsgMutation.isLoading)
-        return;
+      await sendAuthCode('phoneNum', koreanPhoneNumber);
     }
-  }, [formattedReSendTimeLeft, reSendTimeLeft]);
+  }
 
   return (
     <Button
