@@ -191,8 +191,8 @@ export default function Signup({ phoneNumber }: SignUpProps) {
                 onChange={formik.handleChange}
                 value={formik.values.gender}
               >
-                <FormControlLabel value="Male" name="gender" control={<Radio />} label="남자" />
-                <FormControlLabel value="Female" name="gender" control={<Radio />} label="여자" />
+                <FormControlLabel value="MALE" name="gender" control={<Radio />} label="남자" />
+                <FormControlLabel value="FEMALE" name="gender" control={<Radio />} label="여자" />
                 <FormHelperText>{formik.errors.gender}</FormHelperText>
               </RadioGroup>
             </FormControl>
