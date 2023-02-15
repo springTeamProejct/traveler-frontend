@@ -20,6 +20,7 @@ import TextField from "@mui/material/TextField";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useFormik } from "formik";
+import { registerAuthCode } from "../../apis/auth/signup";
 interface SignUpProps {
   phoneNumber: string;
 }
@@ -44,15 +45,15 @@ export default function Signup({ phoneNumber }: SignUpProps) {
       email: 'hwanju1596@gmail.com',
       password: '!!tetetetadfa',
       nickName: '이환주',
-      birth: dayjs("2022-04-02"),
+      birth: '',
       gender: "",
       phoneNum: phoneNumber,
-      confirmPassword: '!!tetetadfa'
     },
     validationSchema: RegisterSchema,
     onSubmit: values => {
-      // alert(JSON.stringify(values, null, 2));
-      console.log(JSON.stringify(values, null, 2));
+      const dateBirth = new Date(values.birth)
+      values.birth = `${dateBirth.getFullYear()}${dateBirth.getMonth() + 1 < 10 ? `0${dateBirth.getMonth() + 1}` : dateBirth.getMonth() + 1}${dateBirth.getDate() < 10 ? `0${dateBirth.getDate()}` : dateBirth.getDate()}`;
+      registerAuthCode(values);
     },
   });
 
@@ -173,7 +174,7 @@ export default function Signup({ phoneNumber }: SignUpProps) {
                 openTo="year"
                 views={["year", "month", "day"]}
                 onChange={(value) => {
-                  value !== null ? formik.setFieldValue('birth', Date.parse(value)) : console.log('null');
+                  value !== null ? formik.setFieldValue('birth', Date.parse(value.toString())) : console.log('null');
                 }}
                 value={formik.values.birth}
                 renderInput={(params) => <TextField {...params} />}
