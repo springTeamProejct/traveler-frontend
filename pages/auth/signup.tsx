@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import Head from "next/head";
 import NextLink from "next/link";
 import * as Yup from 'yup';
-import dayjs, { Dayjs } from "dayjs";
 import {
   Button,
   Typography,
@@ -23,6 +22,7 @@ import { useFormik } from "formik";
 import { registerAuthCode, sendAuthCode, validateAuthCode } from "../../apis/auth/signup";
 import { InputAndTimer } from "../../components/AuthCodeInput";
 import { ErrorDefinition } from "../../utils/error";
+import Swal from "sweetalert2";
 interface SignUpProps {
   phoneNumber: string;
   setIsUser: React.Dispatch<React.SetStateAction<string>>;
@@ -70,6 +70,33 @@ export default function Signup({ phoneNumber, setIsUser }: SignUpProps) {
 
     },
   });
+  const handleInputComplete = async (completedValue: string) => {
+    const responseData = await validateAuthCode(formik.values.email, completedValue);
+    if (responseData.response) {
+      // fail
+      const errorData = ErrorDefinition[responseData.response.data];
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: errorData.message,
+        timer: 1000,
+        showConfirmButton: false
+      });;
+      setIsCertified(false);
+    }
+    else if (responseData.response === undefined) {
+      // success
+      await Swal.fire({
+        icon: 'success',
+        title: 'success',
+        text: "인증되었습니다.",
+        timer: 1000,
+        showConfirmButton: false
+      });
+      setShowAuthSection(false);
+      setIsCertified(true);
+    }
+  }
 
   const [authStart, setAuthStart] = useState(false);
   const [showAuthSection, setShowAuthSection] = useState(false);
@@ -130,30 +157,15 @@ export default function Signup({ phoneNumber, setIsUser }: SignUpProps) {
               onClick={() => {
                 setAuthStart((authStart) => !authStart);
                 setShowAuthSection(true);
-                alert(`${formik.values.email}로 인증번호를 발송했습니다.`)
                 sendAuthCode('email', formik.values.email);
               }}
-              sx={{ height: "100%", fontSize: "11px" }}
+              sx={{ height: "100%" }}
             >
               인증
             </Button>
           </Grid>
           <Grid item xs={9} display={{ xs: showAuthSection ? "" : "none", lg: showAuthSection ? "" : "none" }}>
-            <InputAndTimer timerStart={authStart} handleComplete={async (completedValue) => {
-              const responseData = await validateAuthCode(formik.values.email, completedValue);
-              if (responseData.response) {
-                // fail
-                const errorData = ErrorDefinition[responseData.response.data];
-                alert(errorData.message);
-                setIsCertified(false);
-              }
-              else if (responseData.response === undefined) {
-                // success
-                alert("인증에 성공했습니다.");
-                setShowAuthSection(false);
-                setIsCertified(true);
-              }
-            }} />
+            <InputAndTimer timerStart={authStart} handleComplete={handleInputComplete} />
           </Grid>
           <Grid item xs={12}>
             <TextField

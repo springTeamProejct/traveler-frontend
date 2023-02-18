@@ -1,4 +1,4 @@
-export const ErrorDefinition = {
+export const ErrorDefinition: any = {
   J00: {
     status: 409,
     message: "이미 가입된 회원입니다.",

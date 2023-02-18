@@ -15,6 +15,7 @@ import { MuiOtpInput } from 'mui-one-time-password-input';
 import { useCountdownTimer } from "../../hooks/useCountdownTimer"
 import { validateAuthCode, sendAuthCode } from "../../apis/auth/signup";
 import { ErrorDefinition } from "../../utils/error";
+import Swal from "sweetalert2";
 
 interface AuthCodeSendBtnProps {
   showAuthCodeInput: boolean;
@@ -96,11 +97,23 @@ const AuthCodeInput = ({ sendAuthBtn, phoneNumber, setIsUser, setPhoneNumberForS
     if (responseData.response) {
       // fail
       const errorData = ErrorDefinition[responseData.response.data];
-      alert(errorData.message);
-      console.log("🚀 ~ file: certification-phone.tsx:116 ~ handleComplete ~ errorData", errorData)
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: errorData.message,
+        timer: 1000,
+        showCloseButton: false
+      });
     }
     else if (responseData.response === undefined) {
       // success
+      await Swal.fire({
+        icon: 'success',
+        title: 'success',
+        text: "인증되었습니다.",
+        timer: 1000,
+        showCloseButton: false
+      });
       setPhoneNumberForSignup(koreanPhoneNumber);
       setIsUser("notUser"); // Go To SignUp Page
     }
