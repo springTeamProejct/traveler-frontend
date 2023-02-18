@@ -65,7 +65,11 @@ export default function Signup({ phoneNumber, setIsUser }: SignUpProps) {
         });
       }
       else {
-        alert("이메일 인증을 진행해주세요.");
+        Swal.fire({
+          icon: 'info',
+          title: 'info',
+          text: "메일 인증을 진행해주세요.",
+        });
       }
 
     },
