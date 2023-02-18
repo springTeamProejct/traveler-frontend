@@ -20,12 +20,15 @@ import TextField from "@mui/material/TextField";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useFormik } from "formik";
-import { registerAuthCode } from "../../apis/auth/signup";
+import { registerAuthCode, sendAuthCode, validateAuthCode } from "../../apis/auth/signup";
+import { InputAndTimer } from "../../components/AuthCodeInput";
+import { ErrorDefinition } from "../../utils/error";
 interface SignUpProps {
   phoneNumber: string;
+  setIsUser: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export default function Signup({ phoneNumber }: SignUpProps) {
+export default function Signup({ phoneNumber, setIsUser }: SignUpProps) {
   const RegisterSchema = Yup.object().shape({
     nickName: Yup.string().min(2, '너무 짧아요.').max(50, '너무 길어요.').required('필수항목 이예요.'),
     email: Yup.string().email('이메일 형식으로 입력해주세요.').required('필수항목 이예요.'),
@@ -37,25 +40,40 @@ export default function Signup({ phoneNumber }: SignUpProps) {
         [Yup.ref("password")],
         "비밀번호가 다릅니다."
       )
-    })
+    }).required('필수할목 이에요.')
   });
 
   const formik = useFormik({
     initialValues: {
       email: 'hwanju1596@gmail.com',
       password: '!!tetetetadfa',
+      confirmPassword: '',
       nickName: '이환주',
       birth: '',
       gender: "",
       phoneNum: phoneNumber,
     },
     validationSchema: RegisterSchema,
-    onSubmit: values => {
-      const dateBirth = new Date(values.birth)
-      values.birth = `${dateBirth.getFullYear()}${dateBirth.getMonth() + 1 < 10 ? `0${dateBirth.getMonth() + 1}` : dateBirth.getMonth() + 1}${dateBirth.getDate() < 10 ? `0${dateBirth.getDate()}` : dateBirth.getDate()}`;
-      registerAuthCode(values);
+    onSubmit: (values, actions) => {
+      if (isCertified) {
+        console.log("🚀 ~ file: signup.tsx:55 ~ onSubmit: ~ actions", actions)
+        actions.setSubmitting(false);
+        const dateBirth = new Date(values.birth)
+        values.birth = `${dateBirth.getFullYear()}${dateBirth.getMonth() + 1 < 10 ? `0${dateBirth.getMonth() + 1}` : dateBirth.getMonth() + 1}${dateBirth.getDate() < 10 ? `0${dateBirth.getDate()}` : dateBirth.getDate()}`; //YYYY-MM-DD
+        const res = registerAuthCode(values).then((res) => {
+          console.log("res", res);
+        });
+      }
+      else {
+        alert("이메일 인증을 진행해주세요.");
+      }
+
     },
   });
+
+  const [authStart, setAuthStart] = useState(false);
+  const [showAuthSection, setShowAuthSection] = useState(false);
+  const [isCertified, setIsCertified] = useState(false);
 
   return (
     <Container maxWidth="sm">
@@ -94,6 +112,7 @@ export default function Signup({ phoneNumber }: SignUpProps) {
               label="아이디(이메일)"
               variant="outlined"
               name="email"
+              disabled={isCertified}
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
               value={formik.values.email}
@@ -107,33 +126,34 @@ export default function Signup({ phoneNumber }: SignUpProps) {
               color="primary"
               fullWidth
               variant="contained"
-              // onClick={set}
+              disabled={isCertified}
+              onClick={() => {
+                setAuthStart((authStart) => !authStart);
+                setShowAuthSection(true);
+                alert(`${formik.values.email}로 인증번호를 발송했습니다.`)
+                sendAuthCode('email', formik.values.email);
+              }}
               sx={{ height: "100%", fontSize: "11px" }}
             >
-              인증번호
-              <br />
-              발송
+              인증
             </Button>
           </Grid>
-          <Grid item xs={9} display={{ xs: "none", lg: "none" }}>
-            <TextField
-              id="outlined-basic"
-              label="인증번호 입력"
-              variant="outlined"
-              fullWidth
-            />
-          </Grid>
-          <Grid item xs={3} display={{ xs: "none", lg: "none" }}>
-            <Button
-              color="primary"
-              fullWidth
-              type="submit"
-              variant="contained"
-              // onClick={set}
-              sx={{ height: "100%" }}
-            >
-              확인
-            </Button>
+          <Grid item xs={9} display={{ xs: showAuthSection ? "" : "none", lg: showAuthSection ? "" : "none" }}>
+            <InputAndTimer timerStart={authStart} handleComplete={async (completedValue) => {
+              const responseData = await validateAuthCode(formik.values.email, completedValue);
+              if (responseData.response) {
+                // fail
+                const errorData = ErrorDefinition[responseData.response.data];
+                alert(errorData.message);
+                setIsCertified(false);
+              }
+              else if (responseData.response === undefined) {
+                // success
+                alert("인증에 성공했습니다.");
+                setShowAuthSection(false);
+                setIsCertified(true);
+              }
+            }} />
           </Grid>
           <Grid item xs={12}>
             <TextField
@@ -153,12 +173,12 @@ export default function Signup({ phoneNumber }: SignUpProps) {
           <Grid item xs={12}>
             <TextField
               id="outlined-basic"
-              type="Password"
+              type="password"
               name="confirmPassword"
               label="비밀번호 확인"
               variant="outlined"
               // confirmPassword
-              error={Boolean(formik.errors.confirmPassword)}
+              error={Boolean(formik.touched.confirmPassword && formik.errors.confirmPassword)}
               helperText={formik.touched.confirmPassword && formik.errors.confirmPassword}
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}

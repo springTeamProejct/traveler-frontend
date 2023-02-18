@@ -12,7 +12,7 @@ export default function AuthPageController() {
     return <CertificaationPhone setIsUser={setAuthPage} setPhoneNumberForSignup={setPhoneNumberForSignup} />
   }
   else if (authPage === 'notUser') {
-    return <Signup phoneNumber={phoneNumberForSignup} />
+    return <Signup phoneNumber={phoneNumberForSignup} setIsUser={setAuthPage} />
   }
   else if (authPage === 'isUser') {
     return router.push('/auth/signin');

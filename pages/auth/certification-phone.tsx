@@ -10,7 +10,7 @@ import {
   MuiTelInputCountry,
   MuiTelInputInfo,
 } from "mui-tel-input";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MuiOtpInput } from 'mui-one-time-password-input';
 import { useCountdownTimer } from "../../hooks/useCountdownTimer"
 import { validateAuthCode, sendAuthCode } from "../../apis/auth/signup";
@@ -90,8 +90,8 @@ const AuthCodeInput = ({ sendAuthBtn, phoneNumber, setIsUser, setPhoneNumberForS
   }
 
   const handleComplete = async (completedValue: string) => {
-    // setAuthCode(completedValue);
-    const responseData = await validateAuthCode('phoneNum', koreanPhoneNumber, completedValue);
+
+    const responseData = await validateAuthCode(koreanPhoneNumber, completedValue);
     console.log(responseData.response);
     if (responseData.response) {
       // fail

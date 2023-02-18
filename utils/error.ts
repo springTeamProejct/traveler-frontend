@@ -12,6 +12,14 @@ export const ErrorDefinition = {
       setIsUser: "isUser",
     },
   },
+  J02: {
+    status: 409,
+    message: "잘못된 이메일 형식입니다.",
+  },
+  J03: {
+    status: 409,
+    message: "잘못된 비밀번호 형식입니다.",
+  },
   J04: {
     status: 409,
     message: "인증번호가 틀렸습니다.",
