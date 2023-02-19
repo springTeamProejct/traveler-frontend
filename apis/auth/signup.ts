@@ -83,7 +83,7 @@ export const sendAuthCode = (key: string, value: string) => {
   });
 };
 
-export const registerAuthCode = async (userData: any) => {
+export const registerAuthCode = (userData: any) => {
   console.log(
     "🚀 ~ file: signup.ts:88 ~ registerAuthCode ~ userData",
     userData
@@ -94,18 +94,12 @@ export const registerAuthCode = async (userData: any) => {
     userFormData.append(key, userData[key]);
   }
 
-  await axios({
+  return axios({
     method: "post",
     url: process.env.BACKEND_ADDRESS + "/users",
     data: userFormData,
     headers: { "Content-Type": "multipart/form-data" },
   })
-    .then((res) => {
-      console.log("🚀 ~ file: signup.ts:106 ~ registerAuthCode ~ res", res);
-      return res;
-    })
-    .catch((error) => {
-      console.log("🚀 ~ file: signup.ts:102 ~ registerAuthCode ~ error", error);
-      return error;
-    });
+    .then((res) => res)
+    .catch((error) => error);
 };

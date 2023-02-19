@@ -15,6 +15,6 @@ export default function AuthPageController() {
     return <Signup phoneNumber={phoneNumberForSignup} setIsUser={setAuthPage} />
   }
   else if (authPage === 'isUser') {
-    return router.push('/auth/signin');
+    router.push('/login');
   }
 } 

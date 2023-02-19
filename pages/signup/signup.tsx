@@ -23,6 +23,7 @@ import { registerAuthCode, sendAuthCode, validateAuthCode } from "../../apis/aut
 import { InputAndTimer } from "../../components/AuthCodeInput";
 import { ErrorDefinition } from "../../utils/error";
 import Swal from "sweetalert2";
+
 interface SignUpProps {
   phoneNumber: string;
   setIsUser: React.Dispatch<React.SetStateAction<string>>;
@@ -45,24 +46,40 @@ export default function Signup({ phoneNumber, setIsUser }: SignUpProps) {
 
   const formik = useFormik({
     initialValues: {
-      email: 'hwanju1596@gmail.com',
-      password: '!!tetetetadfa',
+      email: '',
+      password: '',
       confirmPassword: '',
-      nickName: '이환주',
+      nickName: '',
       birth: '',
       gender: "",
       phoneNum: phoneNumber,
     },
     validationSchema: RegisterSchema,
-    onSubmit: (values, actions) => {
+    onSubmit: async (values: any) => {
       if (isCertified) {
-        console.log("🚀 ~ file: signup.tsx:55 ~ onSubmit: ~ actions", actions)
-        actions.setSubmitting(false);
         const dateBirth = new Date(values.birth)
+        delete values.confirmPassword;
         values.birth = `${dateBirth.getFullYear()}${dateBirth.getMonth() + 1 < 10 ? `0${dateBirth.getMonth() + 1}` : dateBirth.getMonth() + 1}${dateBirth.getDate() < 10 ? `0${dateBirth.getDate()}` : dateBirth.getDate()}`; //YYYY-MM-DD
-        const res = registerAuthCode(values).then((res) => {
-          console.log("res", res);
-        });
+        const responseData = await registerAuthCode(values);
+        if (responseData.response) {
+          // fail
+          const errorData = ErrorDefinition[responseData.response.data];
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: errorData.message,
+          });
+        }
+        else if (responseData.response === undefined) {
+          // success
+          await Swal.fire({
+            icon: 'success',
+            title: 'success',
+            text: "회원가입되었습니다..",
+          });
+          setIsUser('isUser');
+        }
+        values.confirmPassword = '';
       }
       else {
         Swal.fire({
@@ -74,6 +91,7 @@ export default function Signup({ phoneNumber, setIsUser }: SignUpProps) {
 
     },
   });
+
   const handleInputComplete = async (completedValue: string) => {
     const responseData = await validateAuthCode(formik.values.email, completedValue);
     if (responseData.response) {
@@ -125,7 +143,6 @@ export default function Signup({ phoneNumber, setIsUser }: SignUpProps) {
           </Grid>
           <Grid item xs={12}>
             <TextField
-              id="outlined-basic"
               label="별명"
               variant="outlined"
               name="nickName"
@@ -139,7 +156,6 @@ export default function Signup({ phoneNumber, setIsUser }: SignUpProps) {
           </Grid>
           <Grid item xs={9}>
             <TextField
-              id="outlined-basic"
               label="아이디(이메일)"
               variant="outlined"
               name="email"
@@ -173,8 +189,8 @@ export default function Signup({ phoneNumber, setIsUser }: SignUpProps) {
           </Grid>
           <Grid item xs={12}>
             <TextField
-              id="outlined-basic"
               type="password"
+              autoComplete='new-password'
               label="비밀번호"
               variant="outlined"
               name="password"
@@ -188,8 +204,8 @@ export default function Signup({ phoneNumber, setIsUser }: SignUpProps) {
           </Grid>
           <Grid item xs={12}>
             <TextField
-              id="outlined-basic"
               type="password"
+              autoComplete='new-password'
               name="confirmPassword"
               label="비밀번호 확인"
               variant="outlined"
@@ -219,7 +235,7 @@ export default function Signup({ phoneNumber, setIsUser }: SignUpProps) {
           </Grid>
           <Grid item xs={6}>
             <FormControl error={Boolean(formik.errors.gender)} variant="standard">
-              <FormLabel id="demo-radio-buttons-group-label">성별</FormLabel>
+              <FormLabel>성별</FormLabel>
               <RadioGroup
                 row
                 aria-labelledby="demo-radio-buttons-group-label"

@@ -39,17 +39,17 @@ interface PhoneNumberInputProps {
 }
 // This Page Function Controller
 export const CertificaationPhone = ({ setIsUser, setPhoneNumberForSignup }: CertificaationPhoneProps) => {
-  const [ShowAuthCodeInput, setShowAuthCodeInput] = useState<boolean>(false);
+  const [showAuthCodeInput, setShowAuthCodeInput] = useState<boolean>(false);
   const [btnClicked, setBtnClicked] = useState<boolean>(false);
   const [phoneNumber, setPhoneNumber] = useState("");
-
+  showAuthCodeInput
   return (
     <Container maxWidth="xs">
       <Stack spacing={2}>
         <PhoneNumberInput phoneNumber={phoneNumber} setPhoneNumber={setPhoneNumber} />
-        <AuthCodeSendBtn showAuthCodeInput={ShowAuthCodeInput} phoneNumber={phoneNumber} setBtnClicked={setBtnClicked} setShowAuthCodeInput={setShowAuthCodeInput} />
+        <AuthCodeSendBtn showAuthCodeInput={showAuthCodeInput} phoneNumber={phoneNumber} setBtnClicked={setBtnClicked} setShowAuthCodeInput={setShowAuthCodeInput} />
         {
-          ShowAuthCodeInput &&
+          showAuthCodeInput &&
           <AuthCodeInput sendAuthBtn={btnClicked} phoneNumber={phoneNumber} setIsUser={setIsUser} setPhoneNumberForSignup={setPhoneNumberForSignup} />
         }
       </Stack>
@@ -91,28 +91,31 @@ const AuthCodeInput = ({ sendAuthBtn, phoneNumber, setIsUser, setPhoneNumberForS
   }
 
   const handleComplete = async (completedValue: string) => {
-
     const responseData = await validateAuthCode(koreanPhoneNumber, completedValue);
-    console.log(responseData.response);
     if (responseData.response) {
       // fail
       const errorData = ErrorDefinition[responseData.response.data];
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: errorData.message,
-        timer: 1000,
-        showCloseButton: false
-      });
+      if (errorData) {
+        await Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: errorData.message,
+          showCloseButton: false,
+          showConfirmButton: false,
+          timer: 1000,
+        })
+        if (errorData.note.setIsUser) setIsUser(errorData.note.setIsUser); // move page 
+      }
     }
     else if (responseData.response === undefined) {
       // success
       await Swal.fire({
         icon: 'success',
-        title: 'success',
+        title: 'Success',
         text: "인증되었습니다.",
         timer: 1000,
-        showCloseButton: false
+        showCloseButton: false,
+        showConfirmButton: false,
       });
       setPhoneNumberForSignup(koreanPhoneNumber);
       setIsUser("notUser"); // Go To SignUp Page
