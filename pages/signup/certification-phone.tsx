@@ -42,7 +42,7 @@ export const CertificaationPhone = ({ setIsUser, setPhoneNumberForSignup }: Cert
   const [showAuthCodeInput, setShowAuthCodeInput] = useState<boolean>(false);
   const [btnClicked, setBtnClicked] = useState<boolean>(false);
   const [phoneNumber, setPhoneNumber] = useState("");
-  showAuthCodeInput
+
   return (
     <Container maxWidth="xs">
       <Stack spacing={2}>

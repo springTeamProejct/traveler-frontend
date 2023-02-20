@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { KakaoOAuthDatas } from "../../utils";
+import { CONSTANTS } from "../../utils";
 
 export const Kakao = () => {
   const KakaoOAuthDatas_ = KakaoOAuthDatas();
@@ -7,7 +8,7 @@ export const Kakao = () => {
   const getKakaoTocken = useMutation({
     mutationFn: (authorizationCode: string) => {
       const json_parameters = {
-        grant_type: "authorization_code", // 고정
+        grant_type: CONSTANTS.AUTHORIZATION_CODE, // 고정
         client_id: process.env.oauth.KAKAO_CLIENT_ID,
         redirect_uri: KakaoOAuthDatas_.REDIRECT_URI,
         code: authorizationCode,
