@@ -49,7 +49,7 @@ export default function Signup({ phoneNumber, setIsUser }: SignUpProps) {
       email: '',
       password: '',
       confirmPassword: '',
-      nickName: '',
+      nickname: '',
       birth: '',
       gender: "",
       phoneNum: phoneNumber,
@@ -145,12 +145,12 @@ export default function Signup({ phoneNumber, setIsUser }: SignUpProps) {
             <TextField
               label="별명"
               variant="outlined"
-              name="nickName"
-              value={formik.values.nickName}
+              name="nickname"
+              value={formik.values.nickname}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              error={Boolean(formik.touched.nickName && formik.errors.nickName)}
-              helperText={formik.touched.nickName && formik.errors.nickName}
+              error={Boolean(formik.touched.nickname && formik.errors.nickname)}
+              helperText={formik.touched.nickname && formik.errors.nickname}
               fullWidth
             />
           </Grid>
