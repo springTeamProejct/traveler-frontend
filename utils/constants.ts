@@ -6,6 +6,7 @@ const CONSTANTS = {
     PATCH: "PATCH",
     DELETE: "delete",
   },
+  AUTHORIZATION_CODE: "authorization_code",
 };
 
 const KakaoOAuthDatas = () => {

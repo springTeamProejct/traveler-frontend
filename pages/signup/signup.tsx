@@ -31,9 +31,15 @@ interface SignUpProps {
 
 export default function Signup({ phoneNumber, setIsUser }: SignUpProps) {
   const RegisterSchema = Yup.object().shape({
-    nickName: Yup.string().min(2, '너무 짧아요.').max(50, '너무 길어요.').required('필수항목 이예요.'),
+    nickname: Yup.string().min(2, '너무 짧아요.').max(50, '너무 길어요.').required('필수항목 이예요.'),
     email: Yup.string().email('이메일 형식으로 입력해주세요.').required('필수항목 이예요.'),
-    password: Yup.string().required('필수항목 이예요.'),
+    password: Yup.string().required('필수항목 이예요.')
+      .min(8, '글자 수는 8~16  입니다.')
+      .max(16, '글자 수는 8~16  입니다.')
+      .matches(
+        /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])/,
+        "특수 문자가 하나이상 포함되어야합니다.(!, @, #, $, %, ^, &, *)"
+      ),
     gender: Yup.string().required('필수항목 이예요.'),
     confirmPassword: Yup.string().when("password", {
       is: (val: string) => (val && val.length > 0 ? true : false),
@@ -41,7 +47,8 @@ export default function Signup({ phoneNumber, setIsUser }: SignUpProps) {
         [Yup.ref("password")],
         "비밀번호가 다릅니다."
       )
-    }).required('필수할목 이에요.')
+    }).required('필수할목 이에요.'),
+    birth: Yup.string().required('필수항목 이예요.'),
   });
 
   const formik = useFormik({
@@ -74,7 +81,7 @@ export default function Signup({ phoneNumber, setIsUser }: SignUpProps) {
           // success
           await Swal.fire({
             icon: 'success',
-            title: 'success',
+            title: 'Success',
             text: "회원가입되었습니다..",
           });
           setIsUser('isUser');
@@ -219,7 +226,9 @@ export default function Signup({ phoneNumber, setIsUser }: SignUpProps) {
             />
           </Grid>
           <Grid item xs={6}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <LocalizationProvider
+              dateAdapter={AdapterDayjs}
+            >
               <DatePicker
                 disableFuture
                 label="생년월일"
@@ -229,7 +238,7 @@ export default function Signup({ phoneNumber, setIsUser }: SignUpProps) {
                   value !== null ? formik.setFieldValue('birth', Date.parse(value.toString())) : console.log('null');
                 }}
                 value={formik.values.birth}
-                renderInput={(params) => <TextField {...params} />}
+                renderInput={(params) => <TextField {...params} helperText={formik.errors.birth} error={Boolean(formik.errors.birth)} />}
               />
             </LocalizationProvider>
           </Grid>
