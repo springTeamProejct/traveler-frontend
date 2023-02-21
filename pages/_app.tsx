@@ -4,7 +4,7 @@ import { RecoilRoot } from 'recoil';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthContextProvider } from '../context/AuthContext';
 import Header from '../components/header';
-import { Toolbar } from '@mui/material';
+import { Container, Toolbar } from '@mui/material';
 
 const queryClient = new QueryClient()
 
@@ -15,8 +15,10 @@ export default function App({ Component, pageProps, router }: AppProps) {
     <RecoilRoot>
       <QueryClientProvider client={queryClient}>
         <AuthContextProvider>
-          {showHeader && <><Header /><Toolbar /></>}
-          <Component {...pageProps} />
+          <Container maxWidth="lg">
+            {showHeader && <><Header /><Toolbar /></>}
+            <Component {...pageProps} />
+          </Container>
         </AuthContextProvider>
       </QueryClientProvider>
     </RecoilRoot>
