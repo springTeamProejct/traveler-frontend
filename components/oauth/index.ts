@@ -1,4 +1,4 @@
-import OAuthKakaoButton from "./oauth-kakao";
-import OAuthNaverButton from "./oauth-naver";
-
-export { OAuthKakaoButton, OAuthNaverButton }
+import { KakaoAuthButton } from "./kakao";
+import { NaverAuthButton } from "./naver";
+import { GoogleAuthButton } from "./google";
+export { KakaoAuthButton, NaverAuthButton, GoogleAuthButton };
