@@ -9,7 +9,7 @@ export const Kakao = () => {
     mutationFn: (authorizationCode: string) => {
       const json_parameters = {
         grant_type: CONSTANTS.AUTHORIZATION_CODE, // 고정
-        client_id: process.env.oauth.KAKAO_CLIENT_ID,
+        client_id: process.env.KAKAO_CLIENT_ID,
         redirect_uri: KakaoOAuthDatas_.REDIRECT_URI,
         code: authorizationCode,
       };
