@@ -14,6 +14,7 @@
     "@mui/icons-material": "^5.10.14",
     "@mui/material": "^5.10.14",
     "@mui/styled-engine-sc": "^5.10.14",
+    "@mui/x-data-grid": "^5.17.24",
     "@mui/x-date-pickers": "^5.0.8",
     "@tanstack/react-query": "^4.16.1",
     "@tanstack/react-query-devtools": "^4.22.0",
