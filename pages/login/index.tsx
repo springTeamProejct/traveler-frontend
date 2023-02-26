@@ -1,16 +1,18 @@
-import { Button, TextField } from '@mui/material';
+import { Button, Container, Divider, TextField } from '@mui/material';
 import { Box } from '@mui/system';
 import React from 'react';
-import {useRouter} from 'next/router'
+import { useRouter } from 'next/router'
 import { fetchProfile, login } from '../../apis/auth';
 import { useAuthContext } from '../../context/AuthContext';
 import * as Yup from 'yup';
 import { useFormik } from "formik";
-
+import { NaverAuthButton, GoogleAuthButton, KakaoAuthButton } from '../../components/oauth';
+import Image from 'next/image';
+import Logo from '/public/tempIcon.png'
 
 export default function Login() {
   const { setInitToken, setProfile } = useAuthContext();
-	const router = useRouter();
+  const router = useRouter();
 
   const RegisterSchema = Yup.object().shape({
     email: Yup.string().email('이메일 형식으로 입력해주세요.').required('필수항목 이예요.'),
@@ -34,28 +36,30 @@ export default function Login() {
     },
   });
 
-  return(
-    <div style={{
-      display: 'flex',
-      width: '100vw',
-      height: '100vh',
-      justifyContent: 'center',
-      alignItems: 'center',
-    }}>
+  return (
+    <Container maxWidth="xs">
       <Box
-        style={{ width: '300px' }}
+        sx={{
+          textAlign: 'center',
+        }}>
+        <Image src={Logo}
+          alt='Traveler'
+          width={200}
+          height={200}
+        />
+      </Box>
+
+      <Box
         component='form'
         sx={{
           display: 'flex',
           flexDirection: 'column',
-          '& > :not(style)': { m: 1, width: '25ch' }
         }}
         noValidate
         autoComplete='off'
         onSubmit={formik.handleSubmit}
       >
         <TextField
-          style={{ width: '94%' }}
           id='outlined-basic'
           variant='outlined'
           label='email'
@@ -65,9 +69,8 @@ export default function Login() {
           onBlur={formik.handleBlur}
           error={Boolean(formik.touched.email && formik.errors.email)}
           helperText={formik.touched.email && formik.errors.email}
-        / >
+        />
         <TextField
-          style={{ width: '94%' }}
           id='outlined-basic'
           variant='outlined'
           label='password'
@@ -78,15 +81,18 @@ export default function Login() {
           onBlur={formik.handleBlur}
           error={Boolean(formik.touched.password && formik.errors.password)}
           helperText={formik.touched.password && formik.errors.password}
-        / >
+        />
         <Button
-          style={{ width: '94%' }}
           type='submit'
           variant='contained'
         >
           Login
         </Button>
+        <Divider> <br />Or<br /><br /></Divider>
+        <NaverAuthButton />
+        <GoogleAuthButton />
+        <KakaoAuthButton />
       </Box>
-    </div>
+    </Container>
   )
 }
