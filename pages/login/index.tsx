@@ -40,13 +40,17 @@ export default function Login() {
     <Container maxWidth="xs">
       <Box
         sx={{
+          marginTop: '100px',
+          marginBottom: '80px',
           textAlign: 'center',
         }}>
-        <Image src={Logo}
-          alt='Traveler'
-          width={200}
-          height={200}
-        />
+        <a href="/">
+          <Image src={Logo}
+            alt='Traveler'
+            width={200}
+            height={200}
+          />
+        </a>
       </Box>
 
       <Box
