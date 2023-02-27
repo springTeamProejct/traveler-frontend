@@ -8,8 +8,8 @@ import TravlePost from './travlePostOne'
 export default function boardPageController() {
   return (
     <Container maxWidth='lg'>
-      <TravlePost />
-      <TravlePostList/>
+      {/* <TravlePost />
+      <TravlePostList/> */}
       <TravlePostCreate/>
     </Container>
   )
