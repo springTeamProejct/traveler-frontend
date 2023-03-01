@@ -19,7 +19,7 @@ import { useAuthContext } from "../context/AuthContext";
 const LeftItems = () => {
     const pages = [
         { name: '게시판', path: '/' },
-        { name: '여행동행', path: '/' },
+        { name: '여행동행', path: '/travle' },
         { name: '채팅', path: '/' }
     ]
 	const router = useRouter();

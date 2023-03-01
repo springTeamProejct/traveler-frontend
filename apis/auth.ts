@@ -50,5 +50,13 @@ export async function accessTokenRefresh(accessToken: string, refreshToken: stri
 }
 
 export async function logout() {
+  //통신
+
+  //context 삭제
+
+  // localstorage 삭제
+  localStorage.clear()
+
+
 
 }
