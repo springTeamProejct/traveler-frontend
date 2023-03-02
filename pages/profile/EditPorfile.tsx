@@ -1,4 +1,5 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Typography } from '@mui/material';
+import { Edit, Fullscreen } from '@mui/icons-material';
+import { Avatar, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, TextField, Typography } from '@mui/material';
 import { Form, useFormik } from 'formik';
 import * as Yup from 'yup';
 
@@ -47,6 +48,13 @@ export default function EditProfile({ open, handleClose }: EditProfileDialogProp
                 <DialogTitle>프로필 수정</DialogTitle>
                 <form onSubmit={formik.handleSubmit}>
                     <DialogContent>
+                        <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', p: 2 }}>
+                            <Avatar sx={{ width: 200, height: 200 }} alt="User Avatar" src="/path/to/avatar.png" onMouseEnter={(e) => e.currentTarget.children[0].style.display = 'block'} onMouseLeave={(e) => e.currentTarget.children[0].style.display = 'none'}>
+                                <IconButton sx={{ display: 'none', position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
+                                    <Edit />
+                                </IconButton>
+                            </Avatar>
+                        </Box>
                         <TextField
                             fullWidth
                             label="별명"
@@ -97,8 +105,8 @@ export default function EditProfile({ open, handleClose }: EditProfileDialogProp
                         />
                     </DialogContent >
                     <DialogActions>
-                        <Button onClick={handleClose}>Cancel</Button>
-                        <Button type='submit' color="primary">Save Changes</Button>
+                        <Button type='submit' color="primary">저장</Button>
+                        <Button onClick={handleClose}>취소</Button>
                     </DialogActions >
                 </form>
             </Dialog >
