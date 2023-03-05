@@ -12,7 +12,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Form, useFormik } from "formik";
+import { useFormik } from "formik";
 import { useState } from "react";
 import * as Yup from "yup";
 
@@ -20,6 +20,7 @@ interface EditProfileDialogProps {
   open: boolean;
   handleClose: () => void;
 }
+
 export default function EditProfile({
   open,
   handleClose,
@@ -50,6 +51,7 @@ export default function EditProfile({
 
   const formik = useFormik({
     initialValues: {
+      image: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -61,8 +63,8 @@ export default function EditProfile({
     },
   });
 
-  const [uploadedImage, setSelectedImage] = useState("");
   const [noneOrBlock, setNoneOrBlock] = useState("none");
+
   const handleFileInputChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -72,7 +74,7 @@ export default function EditProfile({
       reader.onload = (e: ProgressEvent<FileReader>) => {
         const newImage = e.target?.result;
 
-        setSelectedImage(newImage as string);
+        formik.setFieldValue("image", newImage as string);
       };
       reader.readAsDataURL(file);
     }
@@ -83,6 +85,7 @@ export default function EditProfile({
       input.click();
     }
   };
+
   return (
     <>
       <Dialog open={open} onClose={handleClose}>
@@ -100,20 +103,18 @@ export default function EditProfile({
               <InputLabel htmlFor="avatar-input">
                 <Avatar
                   sx={{ width: 200, height: 200 }}
-                  alt="User Avatar"
-                  src={uploadedImage}
-                  onMouseEnter={(e: any) => setNoneOrBlock("block")}
-                  onMouseLeave={(e: any) => setNoneOrBlock("none")}
+                  onMouseEnter={() => setNoneOrBlock("block")}
+                  onMouseLeave={() => setNoneOrBlock("none")}
+                  src={formik.values.image}
                 >
                   <IconButton
                     onClick={handleActivityButtonClick}
                     sx={{
                       display: { noneOrBlock },
                       position: "absolute",
-                      top: 0,
-                      left: 0,
                       width: "100%",
                       height: "100%",
+                      zIndex: 999999,
                     }}
                   >
                     <Edit sx={{ display: noneOrBlock }} />
