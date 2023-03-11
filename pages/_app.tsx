@@ -4,8 +4,8 @@ import { RecoilRoot } from 'recoil';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthContextProvider } from '../context/AuthContext';
 import Header from '../components/header';
-import { Button, Container, Toolbar } from '@mui/material';
-import ChatController from '../components/Chat';
+import { Container, Toolbar } from '@mui/material';
+import ChatController from './Chat';
 
 const queryClient = new QueryClient()
 
