@@ -1,6 +1,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
-import { TextField, Typography, Paper, Box } from '@mui/material';
+import { TextField, Typography, Paper, Box, IconButton } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 interface Message {
     id: number;
@@ -8,8 +9,11 @@ interface Message {
     sender: string;
     timestamp: string;
 }
+interface ChatRoomProps {
+    setGotoList: React.Dispatch<React.SetStateAction<boolean>>
+}
 
-const ChatRoom = () => {
+const ChatRoom = ({ setGotoList }: ChatRoomProps) => {
     const messagesRef = useRef<null | HTMLDivElement>(null);
     const [messages, setMessages] = useState<Message[]>([]);
     const [inputValue, setInputValue] = useState('');
@@ -21,7 +25,7 @@ const ChatRoom = () => {
             if (inputValue.trim() !== '') {
                 const newMessage: Message = {
                     id: messages.length + 1,
-                    content: inputValue,
+                    content: inputValue.trim(),
                     sender: 'Me',
                     timestamp: new Date().toLocaleString(),
                 };
@@ -54,7 +58,10 @@ const ChatRoom = () => {
                     height: 64,
                 }}
             >
-                <Typography variant="h5">Title</Typography>
+                <IconButton onClick={() => setGotoList(false)}>
+                    <ArrowBackIcon />
+                </IconButton>
+                <Typography variant="h5">Messenger</Typography>
             </Box>
             <Box
                 sx={{
@@ -76,7 +83,11 @@ const ChatRoom = () => {
                                 }),
                             }}
                         >
-                            {message.content}
+                            {message.content.split('\n').map((line, index) => (
+                                <Typography key={index} variant="body1">
+                                    {line}
+                                </Typography>
+                            ))}
                             <Box
                                 sx={{
                                     position: 'absolute',
@@ -115,12 +126,12 @@ const ChatRoom = () => {
                         position: 'fixed',
                         bottom: 0,
                         marginBottom: '16px',
+                        width: '100%',
                     }}
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyDown={handleSend}
                     placeholder="Type a message"
-                    fullWidth
                     multiline
                     minRows={1}
                 />

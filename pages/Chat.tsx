@@ -1,19 +1,21 @@
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import ChatIcon from '@mui/icons-material/Chat';
 import { Box, Fab, Stack } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import { chatRooms } from "./tempDatas";
-import ChatRoom from "./testpage";
 import ChatRoomList from "../components/ChatRoomList";
+import ChatRoom from "../components/ChatRoom";
 
 interface ChatControllerProps {
 }
 
 const ChatController = () => {
     const [open, setOpen] = useState(false);
+    const [openTempChatRoom, setOpenTempChatRoom] = useState(false);
+    const [chatRoomId, setChatRoomId] = useState<number>();
 
     const handleFABClick = () => {
         setOpen(!open);
@@ -21,13 +23,15 @@ const ChatController = () => {
     const handleClose = () => {
         setOpen((value) => !value);
     };
-    const onChatRoomClick = (chatRoomId: string) => {
-        console.log("🚀 ~ file: Chat.tsx:25 ~ onChatRoomClick ~ onChatRoomClick")
-
-        return (
-            < ChatRoom />
-        );
+    const onChatRoomClick = (chatRoomId: number) => {
+        setChatRoomId(chatRoomId);
+        setOpenTempChatRoom(!openTempChatRoom);
     }
+
+    useEffect(() => {
+
+
+    }, [chatRoomId]);
 
     return (
         <>
@@ -55,12 +59,18 @@ const ChatController = () => {
                             <Box
                                 sx={{
                                     position: 'absolute',
+                                    width: '100%',
                                     height: '573px',
                                     borderRadius: 5,
                                     overflow: 'auto',
                                     overflowY: 'scroll',
                                 }}>
-                                <ChatRoomList chatRooms={chatRooms} onChatRoomClick={onChatRoomClick} />
+                                {
+                                    openTempChatRoom ?
+                                        <ChatRoom setGotoList={setOpenTempChatRoom} />
+                                        :
+                                        <ChatRoomList chatRooms={chatRooms} onChatRoomClick={onChatRoomClick} />
+                                }
                             </Box>
                         </Stack>
                     </Box>

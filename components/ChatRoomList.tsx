@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 
 interface ChatRoom {
-    chatRoomId: string;
+    chatRoomId: number;
     title: string;
     lastMessage: string;
     lastMessageAt: Date;
@@ -19,7 +19,7 @@ interface ChatRoom {
 
 interface ChatRoomListBoxProps {
     chatRooms: ChatRoom[];
-    onChatRoomClick: (chatRoomId: string) => void;
+    onChatRoomClick: (chatRoomId: number) => void;
 }
 
 function ChatRoomListBox({ chatRooms, onChatRoomClick }: ChatRoomListBoxProps) {
