@@ -2,64 +2,70 @@
 import React, { useState } from "react";
 
 import ChatIcon from '@mui/icons-material/Chat';
-import { Box, Fab } from '@mui/material';
+import { Box, Fab, Stack } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import ChatList from "../components/ChatList";
 import { chatRooms } from "./tempDatas";
+import ChatRoom from "./testpage";
+import ChatRoomList from "../components/ChatRoomList";
 
-interface ChatMainBoxProps {
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-export const ChatMainBox = ({ setOpen }: ChatMainBoxProps) => {
-    const handleClose = () => {
-        setOpen((value) => !value);
-    };
-    const onChatRoomClick = (chatRoomId: string) => {
-        console.log("🚀 ~ file: Chat.tsx:20 ~ ChatMainBox ~ value:", chatRoomId)
-    }
-    return (
-        <>
-            <Box
-                sx={{
-                    width: '400px',
-                    height: '600px',
-                    border: '1px solid black',
-                    borderRadius: 5,
-                    position: 'fixed',
-                    right: 20,
-                    bottom: 20,
-                    overflow: 'auto',
-                    overflowY: 'scroll',
-                    paddingTop: '100px',
-
-                }}
-            >
-                <IconButton
-                    sx={{ position: 'absolute', top: 5, right: 5, zIndex: 999 }}
-                    onClick={handleClose}
-                >
-                    <CloseIcon />
-                </IconButton>
-                <ChatList chatRooms={chatRooms} onChatRoomClick={onChatRoomClick} />
-            </Box>
-        </>
-    );
+interface ChatControllerProps {
 }
 
 const ChatController = () => {
     const [open, setOpen] = useState(false);
 
-    const handleClick = () => {
+    const handleFABClick = () => {
         setOpen(!open);
     };
+    const handleClose = () => {
+        setOpen((value) => !value);
+    };
+    const onChatRoomClick = (chatRoomId: string) => {
+        console.log("🚀 ~ file: Chat.tsx:25 ~ onChatRoomClick ~ onChatRoomClick")
+
+        return (
+            < ChatRoom />
+        );
+    }
 
     return (
         <>
             {
                 open ?
-                    <Fab onClick={handleClick}
+                    <Box
+                        sx={{
+                            width: '400px',
+                            height: '600px',
+                            border: '1px solid black',
+                            borderRadius: 5,
+                            position: 'fixed',
+                            right: 20,
+                            bottom: 20,
+
+                        }}
+                    >
+                        <Stack spacing={3} >
+                            <IconButton
+                                sx={{ height: '10px', position: 'absolute', top: 5, right: 5, zIndex: 999 }}
+                                onClick={handleClose}
+                            >
+                                <CloseIcon />
+                            </IconButton>
+                            <Box
+                                sx={{
+                                    position: 'absolute',
+                                    height: '573px',
+                                    borderRadius: 5,
+                                    overflow: 'auto',
+                                    overflowY: 'scroll',
+                                }}>
+                                <ChatRoomList chatRooms={chatRooms} onChatRoomClick={onChatRoomClick} />
+                            </Box>
+                        </Stack>
+                    </Box>
+                    :
+                    <Fab onClick={handleFABClick}
                         variant="circular"
                         sx={{
                             position: 'fixed',
@@ -68,8 +74,6 @@ const ChatController = () => {
                         }}>
                         <ChatIcon />
                     </Fab>
-                    :
-                    <ChatMainBox setOpen={setOpen} />
             }
         </>
     );
