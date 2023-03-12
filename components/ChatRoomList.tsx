@@ -15,7 +15,6 @@ interface ChatRoom {
     title: string;
     lastMessage: string;
     lastMessageAt: Date;
-    // lastMessageAt: String;
 }
 
 interface ChatRoomListBoxProps {
@@ -28,7 +27,7 @@ function ChatRoomListBox({ chatRooms, onChatRoomClick }: ChatRoomListBoxProps) {
     return (
         <List sx={{ bgcolor: 'background.paper' }}>
             {chatRooms.map((chatRoom) => (
-                <React.Fragment key={chatRoom.chatRoomId}>
+                <div key={chatRoom.chatRoomId}>
                     <ListItem
                         alignItems="flex-start"
                         sx={{
@@ -55,7 +54,7 @@ function ChatRoomListBox({ chatRooms, onChatRoomClick }: ChatRoomListBoxProps) {
                                         }}
                                         component="span"
                                         variant="body2"
-                                        color="textPrimary"
+                                        color="text.Primary"
                                     >
                                         {chatRoom.lastMessage}
                                     </Typography>
@@ -67,7 +66,7 @@ function ChatRoomListBox({ chatRooms, onChatRoomClick }: ChatRoomListBoxProps) {
                                         }}
                                         component="span"
                                         variant="caption"
-                                        color="textSecondary"
+                                        color="text.Secondary"
                                     >
                                         {chatRoom.lastMessageAt.toLocaleString()}
                                     </Typography>
@@ -76,7 +75,7 @@ function ChatRoomListBox({ chatRooms, onChatRoomClick }: ChatRoomListBoxProps) {
                         />
                     </ListItem>
                     <Divider variant="inset" component="li" />
-                </React.Fragment>
+                </div>
             ))}
         </List>
     );
