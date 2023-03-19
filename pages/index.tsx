@@ -1,6 +1,8 @@
 import Head from 'next/head'
 import { useEffect } from 'react';
 import { useAuthContext } from '../context/AuthContext';
+import { tokenAtom, myPorfileAtom } from '../store/user';
+import { useRecoilValue } from 'recoil';
 
 
 export default function Home() {
@@ -27,9 +29,13 @@ export default function Home() {
     }
 
   }, [])
-  const { accessToken } = useAuthContext();
-
+  const getToken = useRecoilValue(tokenAtom);
+  const getProfile = useRecoilValue(myPorfileAtom);
   return (
-    <p>메인페이지accessToken: {accessToken?.toString()}</p>
+    <>
+      <p>메인페이지accessToken: {JSON.stringify(getToken)} </p>
+      <br />
+      <p>profile: {JSON.stringify(getProfile)} </p>
+    </>
   )
 }

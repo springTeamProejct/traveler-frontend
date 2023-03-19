@@ -1,52 +1,58 @@
-import axios from 'axios';
-import { StringMappingType } from 'typescript';
-export type loginResponseDto = {
-  grantType: 'Bearer',
-  accessToken: string,
-  refreshToken: string,
-  accessTokenExpiresIn: number,
-}
+import axios from "axios";
 
-export async function login(loginDto: { email: string, password: string }): Promise<loginResponseDto> {
+export type reponseTokenData = {
+  grantType: "Bearer";
+  accessToken: string;
+  refreshToken: string;
+  accessTokenExpiresIn: number;
+};
+
+export async function getToken(loginDto: {
+  email: string;
+  password: string;
+}): Promise<reponseTokenData> {
   return axios({
-    method: 'post',
+    method: "post",
     url: `${process.env.BACKEND_ADDRESS}/users/login`,
-    headers: { 'Content-Type': 'application/json' },
-    data: JSON.stringify(loginDto)
+    headers: { "Content-Type": "application/json" },
+    data: JSON.stringify(loginDto),
   })
-  .then(res => res.data)
-  .catch(console.error);
+    .then((res) => res.data)
+    .catch((error) => error);
 }
 
 export type profile = {
-  nickname: string,
-  fileId: string,
-  email: string,
-  phoneNum: string,
-}
+  nickname: string;
+  fileId: string;
+  email: string;
+  phoneNum: string;
+};
 
 export async function fetchProfile(accessToken: string): Promise<profile> {
   return axios({
-    method: 'get',
+    method: "get",
     url: `${process.env.BACKEND_ADDRESS}/users/mypage`,
     headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${accessToken}`
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
     },
   })
-  .then(res => res.data)
-  .catch(console.error);
+    .then((res) => res.data)
+    .catch((error) => error);
 }
 
-export async function accessTokenRefresh(accessToken: string, refreshToken: string): Promise<loginResponseDto> {
+export async function accessTokenRefresh(
+  accessToken: string,
+  refreshToken: string
+): Promise<reponseTokenData> {
   return axios({
-    method: 'post',
+    method: "post",
     url: `${process.env.BACKEND_ADDRESS}/users/reissue`,
-    headers: { 'Content-Type': 'application/json' },
-    data: JSON.stringify({ accessToken, refreshToken })
+    headers: { "Content-Type": "application/json" },
+    data: JSON.stringify({ accessToken, refreshToken }),
   })
-  .then(res => res.data)
-  .catch(console.error);
+    .then((res) => res.data)
+    .catch((error) => error);
 }
 
 export async function logout() {
@@ -55,8 +61,5 @@ export async function logout() {
   //context 삭제
 
   // localstorage 삭제
-  localStorage.clear()
-
-
-
+  localStorage.clear();
 }
