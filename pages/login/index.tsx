@@ -2,16 +2,19 @@ import { Button, Container, Divider, TextField } from '@mui/material';
 import { Box } from '@mui/system';
 import React from 'react';
 import { useRouter } from 'next/router'
-import { fetchProfile, login } from '../../apis/auth';
+import { fetchProfile, getToken } from '../../apis/auth';
 import { useAuthContext } from '../../context/AuthContext';
 import * as Yup from 'yup';
 import { useFormik } from "formik";
 import { NaverAuthButton, GoogleAuthButton, KakaoAuthButton } from '../../components/oauth';
 import Image from 'next/image';
 import Logo from '/public/tempIcon.png'
+import { tokenAtom, userAtom, myPorfileAtom } from '../../store/user';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 
 export default function Login() {
-  const { setInitToken, setProfile } = useAuthContext();
+  const setToken = useSetRecoilState(tokenAtom);
+  const setProfile = useSetRecoilState(myPorfileAtom);
   const router = useRouter();
 
   const RegisterSchema = Yup.object().shape({
@@ -27,10 +30,10 @@ export default function Login() {
     validationSchema: RegisterSchema,
     onSubmit: async (values) => {
       console.log(values);
-      const loginResponseDto = await login(values);
-      setInitToken(loginResponseDto);
+      const token = await getToken(values);
+      setToken(token)
       // 로그인 직후 프로필 정보를 가져오는 부분 백엔드 API가 완성되면 풀자
-      const profile = await fetchProfile(loginResponseDto.accessToken);
+      const profile = await fetchProfile(token.accessToken);
       setProfile(profile);
       router.push('/');
     },

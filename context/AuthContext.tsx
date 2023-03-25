@@ -1,11 +1,11 @@
 import React, { createContext, useContext, useState } from "react";
-import { accessTokenRefresh, loginResponseDto, profile } from "../apis/auth";
+import { accessTokenRefresh, reponseTokenData, profile } from "../apis/auth";
 
 type authContext = {
   profile: profile | null,
   setProfile: React.Dispatch<React.SetStateAction<profile | null>>,
   accessToken: string | null,
-  setInitToken: (token: loginResponseDto) => void,
+  setInitToken: (token: reponseTokenData) => void,
   tokenRefresh: () => void
 }
 
@@ -27,7 +27,7 @@ export function AuthContextProvider({ children }: { children: React.ReactNode })
     }
   }
 
-  const setInitToken = (token: loginResponseDto) => {
+  const setInitToken = (token: reponseTokenData) => {
     setAccessToken(token.accessToken);
     setRefreshToken(token.refreshToken);
   }
