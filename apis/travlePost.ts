@@ -14,7 +14,7 @@ type FetchPostResponse = {
 type createPost = { title: string, contents: string }
 
 // 1건 조회
-const fetchTravlePost = (postNo: number) => axios({
+const fetchTravlePost = (postNo: number, key: string) => axios({
   method: CONSTANTS.HTTP_METHOD.GET,
   url: `${CONSTANTS.SERVER_URL}/article/${postNo}`,
   headers: { 'Content-Type': 'application/json' }

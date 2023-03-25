@@ -7,32 +7,24 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { useFetchTravlePosts } from '../../apis';
+import { usePosts } from '../../hooks/usePosts'
 
 export default function TravlePostList() {
+  const { isLoading, error, isSuccess, data } = usePosts().GetPostAll({
+    page: 1,
+    size: 10,
+    category: 'TRAVEL',
+  });
 
-  const query = useFetchTravlePosts({
-    select: (data: any) => data.map((row: any) => {
-      return {
-        id: row.id,
-        title: row.contents, 
-        author: row.userId,
-        createAt: row.createAt,
-        view: 1,
-        partyCount: 5
-      }
-    })
-  })
+  if (isLoading) return <p>Loading...</p>
 
-  // useEffect(() => console.log(JSON.stringify(query)), [query])
-
-  if (query.isLoading) return <p>Loading...</p>
-
-  if (query.error) return <p>An error has occurred</p>
+  if (error) return <p>An error has occurred</p>
 
   return (
     <>
       <h1>리스트  조회</h1>
-      <TableContainer component={Paper}>
+      <p>{JSON.stringify(data)}</p>
+      {/* <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <colgroup>
             {[10, 50, 10, 10, 10, 10].map((size, i) => <col key={i} width={`${size}%`} />)}
@@ -64,7 +56,7 @@ export default function TravlePostList() {
           </TableBody>
         </Table>
       </TableContainer>
-      <div style={{ backgroundColor: 'gray', width: '100%', height: '30px', margin: '20px 0px' }}></div>
+      <div style={{ backgroundColor: 'gray', width: '100%', height: '30px', margin: '20px 0px' }}></div> */}
     </>
   );
 }

@@ -1,4 +1,14 @@
-import { KakaoOAuthDatas } from "./oauth-kakao";
-import { CONSTANTS } from "./constants";
+import { CONSTANTS, KakaoOAuthDatas, NaverOAuthDatas } from "./constants";
+import { useEffect, useRef } from "react";
 
-export { KakaoOAuthDatas, CONSTANTS }
+const useDidUpdateEffect = (fn: () => void, inputs: any[]) => {
+  const didMountRef = useRef(false);
+
+  useEffect(() => {
+    if (didMountRef.current) {
+      return fn();
+    }
+    didMountRef.current = true;
+  }, inputs);
+};
+export { KakaoOAuthDatas, CONSTANTS, NaverOAuthDatas, useDidUpdateEffect };
